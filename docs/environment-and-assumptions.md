@@ -1,6 +1,6 @@
 # Environment and Assumptions
 
-This document records the lab environment the Intune deployment builds on, separates what already exists from what this project adds, and lists every assumption made during the design. Nothing in this repository implies a configuration that has already been executed: execution evidence is collected in `docs/evidence-checklist.md` as each work package is completed.
+This document records the lab environment the Intune deployment builds on, separates what already exists from what this project adds, and lists every assumption made during the design. 
 
 ## Existing On-Premises Environment
 
