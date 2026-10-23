@@ -62,17 +62,17 @@
   <text x="870" y="142" font-size="18" font-weight="bold" fill="#1e40af">Microsoft 365 Tenant</text>
   <text x="870" y="164" font-size="13" fill="#3b82f6">beginningdimension.onmicrosoft.com · Business Premium</text>
 
-  <rect x="870" y="190" width="270" height="110" rx="8" fill="#ffffff" stroke="#2563eb" stroke-width="2"/>
+  <rect x="870" y="190" width="240" height="110" rx="8" fill="#ffffff" stroke="#2563eb" stroke-width="2"/>
   <text x="890" y="216" font-size="14" font-weight="bold" fill="#1e3a8a">Microsoft Entra ID (P1)</text>
   <text x="890" y="236" font-size="12" fill="#64748b">Identities synced via PHS</text>
   <text x="890" y="254" font-size="12" fill="#64748b">Hybrid-joined device objects</text>
   <text x="890" y="272" font-size="12" fill="#64748b">BitLocker recovery keys</text>
 
-  <rect x="1190" y="190" width="250" height="110" rx="8" fill="#ffffff" stroke="#7c3aed" stroke-width="2"/>
-  <text x="1210" y="216" font-size="14" font-weight="bold" fill="#4c1d95">Conditional Access</text>
-  <text x="1210" y="236" font-size="12" fill="#64748b">CA-MFA-AllUsers</text>
-  <text x="1210" y="254" font-size="12" fill="#64748b">CA-RequireCompliantDevice</text>
-  <text x="1210" y="272" font-size="12" fill="#64748b">Report-only, then On</text>
+  <rect x="1210" y="190" width="230" height="110" rx="8" fill="#ffffff" stroke="#7c3aed" stroke-width="2"/>
+  <text x="1225" y="216" font-size="14" font-weight="bold" fill="#4c1d95">Conditional Access</text>
+  <text x="1225" y="236" font-size="12" fill="#64748b">CA-MFA-AllUsers</text>
+  <text x="1225" y="254" font-size="12" fill="#64748b">CA-RequireCompliantDevice</text>
+  <text x="1225" y="272" font-size="12" fill="#64748b">Report-only, then On</text>
 
   <rect x="870" y="470" width="270" height="110" rx="8" fill="#ffffff" stroke="#2563eb" stroke-width="2"/>
   <text x="890" y="496" font-size="14" font-weight="bold" fill="#1e3a8a">Microsoft Intune (Plan 1)</text>
@@ -100,8 +100,8 @@
 
   <!-- 2. Hybrid join -->
   <path d="M 630 595 C 780 595, 870 420, 945 302" fill="none" stroke="#d97706" stroke-width="2.5" marker-end="url(#arrowOrange)"/>
-  <text x="800" y="470" text-anchor="middle" font-size="12" font-weight="bold" fill="#d97706">Hybrid join</text>
-  <text x="800" y="486" text-anchor="middle" font-size="11" fill="#b45309">(SCP-published)</text>
+  <text x="775" y="440" text-anchor="middle" font-size="12" font-weight="bold" fill="#d97706">Hybrid join</text>
+  <text x="775" y="456" text-anchor="middle" font-size="11" fill="#b45309">(SCP-published)</text>
 
   <!-- 3. Automatic MDM enrollment -->
   <path d="M 630 630 C 740 630, 810 575, 870 532" fill="none" stroke="#d97706" stroke-width="2.5" stroke-dasharray="8 5" marker-end="url(#arrowOrange)"/>
@@ -113,9 +113,9 @@
   <text x="800" y="768" text-anchor="middle" font-size="12" font-weight="bold" fill="#059669">Policies · apps · updates · scripts</text>
 
   <!-- 5. Compliance state -->
-  <line x1="1140" y1="245" x2="1190" y2="245" stroke="#7c3aed" stroke-width="2.5" marker-end="url(#arrowPurple)"/>
-  <text x="1165" y="178" text-anchor="middle" font-size="11" font-weight="bold" fill="#7c3aed">compliance state</text>
-  <text x="1165" y="192" text-anchor="middle" font-size="11" fill="#6d28d9">+ MFA signal</text>
+  <line x1="1112" y1="245" x2="1208" y2="245" stroke="#7c3aed" stroke-width="2.5" marker-end="url(#arrowPurple)"/>
+  <text x="1160" y="222" text-anchor="middle" font-size="11" font-weight="bold" fill="#7c3aed">compliance state</text>
+  <text x="1160" y="236" text-anchor="middle" font-size="11" fill="#6d28d9">+ MFA signal</text>
 
   <!-- 6. Intune -> Defender onboarding -->
   <line x1="1005" y1="580" x2="1005" y2="650" stroke="#059669" stroke-width="2.5" marker-end="url(#arrowGreen)"/>
