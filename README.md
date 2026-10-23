@@ -74,7 +74,7 @@ The Intune implementation is split so the ratio is auditable, not claimed — se
 | [Get-DeviceInventory.ps1](scripts/Get-DeviceInventory.ps1) | Managed device (platform script) | Inventory snapshot with exit codes reported to Intune |
 | [Test-CustomCompliance.ps1](scripts/Test-CustomCompliance.ps1) + [custom-compliance-rules.json](scripts/custom-compliance-rules.json) | Managed device (custom compliance) | RDP/SMBv1 discovery with fail-safe JSON rules |
 
-Tenant setup, Entra Connect, hybrid join, the Defender for Business portal connection, the enrollment GPO, and dynamic groups are **foundation prerequisites outside the ratio** — disclosed in the ledger, not hidden in the count. Two optional operational utilities ([Sync-IntuneDevices.ps1](scripts/Sync-IntuneDevices.ps1), [Add-IntuneBulkAssignment.ps1](scripts/Add-IntuneBulkAssignment.ps1)) are also excluded.
+Tenant setup, Entra Connect, hybrid join, the Defender for Business portal connection, the enrollment GPO, and dynamic groups are **foundation prerequisites outside the ratio** — disclosed in the ledger, not hidden in the count. The four PowerShell packages that make up the 20% (P1-P4 in the ledger: sections 17, 18, 15c, and 9) are all mandatory. Sections 19 and 20 ([Sync-IntuneDevices.ps1](scripts/Sync-IntuneDevices.ps1), [Add-IntuneBulkAssignment.ps1](scripts/Add-IntuneBulkAssignment.ps1)) are additional operational utilities beyond the ratio — useful in the lab, not needed for the count.
 
 ## Security and Compliance Objectives
 

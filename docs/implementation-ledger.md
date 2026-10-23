@@ -41,14 +41,14 @@ The Intune implementation is divided into 20 work packages: 16 performed in the 
 
 P3 and P4 are configured through admin-center uploads (as part of sections 15c and 9) but their execution is PowerShell running on managed devices.
 
-## Optional Operational Utilities (Not Counted)
+## Beyond-Ratio Utilities (Not Counted)
 
 | Script | Purpose | Guide section |
 |---|---|---|
 | `Sync-IntuneDevices.ps1` | On-demand device check-in via the Graph sync action | 19 |
 | `Add-IntuneBulkAssignment.ps1` | Bulk group assignment with backup and full-target preservation | 20 |
 
-Useful during validation and scale-out, but the mandatory workflow does not depend on them, so they are excluded from the ratio denominator.
+Useful during validation and scale-out, but the mandatory workflow does not depend on them, so they are excluded from the ratio denominator. To be explicit: the four PowerShell packages inside the ratio (P1-P4 above) are all mandatory; these two scripts are additions on top of it, not two of the four.
 
 ## Foundation Prerequisites (Outside the Ratio)
 
