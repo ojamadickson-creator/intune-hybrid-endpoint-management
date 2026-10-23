@@ -19,7 +19,8 @@ intune-hybrid-endpoint-management/
 │   ├── settings-ownership.md           who owns which setting (GPO vs Intune)
 │   ├── evidence-checklist.md           screenshot + redaction plan per work package
 │   └── assets/lab-diagram.svg         the diagram above
-└── scripts/                           PowerShell automation + JSON
+├── scripts/                           PowerShell automation + JSON
+└── tests/                             parse + functional checks for the scripts
 ```
 
 ## Business Case
@@ -100,4 +101,4 @@ If you want to reproduce this environment: start from the AD project (the domain
 
 ## Status
 
-Design complete; every configuration path and setting was checked against Microsoft Learn at authoring time (October 2026) and each one is recorded with its source in [docs/verification-manifest.md](docs/verification-manifest.md). The scripts are authored and reviewed but not executed against a live tenant — that execution, and the evidence in [docs/evidence-checklist.md](docs/evidence-checklist.md), happens as each package is run in the lab. Expect to confirm values like OS build floors and baseline versions against the linked Microsoft pages at execution time, since Intune updates its UI and baselines continuously.
+Design complete; every configuration path and setting was checked against Microsoft Learn at authoring time (October 2026) and each one is recorded with its source in [docs/verification-manifest.md](docs/verification-manifest.md). The scripts are not executed against a live tenant in this repository — that execution, and the evidence in [docs/evidence-checklist.md](docs/evidence-checklist.md), happens as each package is run in the lab. All scripts pass an AST parse check and the on-device scripts pass mocked functional tests under PowerShell 7.4 (see `tests/`). Expect to confirm values like OS build floors and baseline versions against the linked Microsoft pages at execution time, since Intune updates its UI and baselines continuously.

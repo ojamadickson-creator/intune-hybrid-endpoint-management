@@ -117,7 +117,7 @@ try {
     # --- Resolve the policy (exact match required) -------------------------------------
     $nav = $policyTypesMap[$PolicyType]
     $filterName = ConvertTo-ODataLiteral -Value $PolicyName
-    $policy = Invoke-Graph -Method GET -Uri "https://graph.microsoft.com/v1.0/deviceManagement/$nav?`$filter=displayName eq '$filterName'"
+    $policy = Invoke-Graph -Method GET -Uri "https://graph.microsoft.com/v1.0/deviceManagement/${nav}?`$filter=displayName eq '$filterName'"
     if (-not $policy.value) {
         throw "Policy '$PolicyName' not found under $nav (exact display-name match required)."
     }
@@ -157,7 +157,8 @@ try {
     }
     $stamp = Get-Date -Format 'yyyyMMdd-HHmmss'
     $backupFile = Join-Path $BackupPath "assignments-backup-$([System.IO.Path]::GetFileName($nav))-$stamp.json"
-    $allAssignments | ConvertTo-Json -Depth 8 | Set-Content -Path $backupFile -Encoding UTF8
+    # Wrap in @() so ConvertTo-Json emits a JSON array even for a single assignment.
+    ConvertTo-Json -InputObject @($allAssignments) -Depth 8 | Set-Content -Path $backupFile -Encoding UTF8
     Write-Log "Current assignments backed up to: $backupFile"
 
     $existingGroupIds = @(

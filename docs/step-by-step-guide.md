@@ -27,7 +27,7 @@ Before starting, read `docs/environment-and-assumptions.md` and keep `docs/evide
 5. **UPN suffix decision (lab decision).** This must be resolved before the first sync: Microsoft documents that when a synced user's UPN suffix is not a verified domain in the tenant, Entra ID **replaces** the UPN with the default `.onmicrosoft.com` value after synchronization ([Entra Connect user sign-in](https://learn.microsoft.com/en-us/entra/identity/hybrid/connect/plan-connect-user-signin)) — the user still signs in, but with a different UPN than on-premises. Choose one:
    - **Option A (cleanest):** in the Microsoft 365 admin center go to **Settings** > **Domains** > **Add domain**, add the public domain you control that matches the on-prem UPN suffix (e.g., `beginningdimension.com` or `ad.beginningdimension.com`), and complete the TXT/MX verification at your DNS provider. Then the on-prem UPN suffix matches a verified tenant domain.
    - **Option B (no custom domain):** add the `beginningdimension.onmicrosoft.com` suffix in **Active Directory Domains and Trusts** (Forests > ad.beginningdimension.com > Properties > UPN Suffixes), then stamp it on the pilot user in ADUC.
-   Verify the final UPN with the tenant's verified domains list before syncing — Entra Connect flags objects whose UPN suffix is not a verified tenant domain ([Entra Connect user sign-in](https://learn.microsoft.com/en-us/entra/identity/hybrid/connect/plan-connect-user-signin)).
+   Verify the final UPN against the tenant's verified domains list before syncing — Entra ID replaces unverified-suffix UPNs with the default `.onmicrosoft.com` value after synchronization ([Entra Connect user sign-in](https://learn.microsoft.com/en-us/entra/identity/hybrid/connect/plan-connect-user-signin)).
 6. On DC01, set the pilot user's UPN to match the verified domain (Option A): open **Active Directory Users and Computers** > `Beginningdimension\Users` > `jdoe` > **User logon name** > select the verified suffix. Record the final UPN — it is the identity that enrolls devices and gets Conditional Access policies.
 
 **Expected result.** Licenses are available, the break-glass account(s) exist per the emergency-access guidance, and `jdoe` has a UPN whose suffix matches a verified tenant domain — so Entra ID keeps the on-prem UPN instead of replacing it.
@@ -108,9 +108,9 @@ Before starting, read `docs/environment-and-assumptions.md` and keep `docs/evide
    - **MAM user scope**: **None** (lab decision: no BYOD app-protection scope in this phase).
 3. **Platform restrictions.** Go to **Devices** > **Device onboarding** > **Enrollment** > **Device platform restrictions** > **Windows** ([enrollment restrictions](https://learn.microsoft.com/en-us/intune/device-enrollment/restrictions)):
    - Open the **All Users** default restriction. Under **Personally owned**, set **Block** for Windows enrollment. Devices enrolling via the automatic MDM enrollment GPO are treated as corporate-authorized (GPO is one of the documented authorized corporate enrollment methods), so hybrid-joined machines still enroll — this blocks only random personal devices.
-4. **Device limit.** Go to **Devices** > **Enrollment** > **Windows** > **Device limit restriction** > **Create restriction** ([device limits](https://learn.microsoft.com/en-us/intune/intune-service/enrollment/create-device-limit-restrictions)): name it `LIM-Pilot`, set **Device limit** to **5**, assign it to the pilot group. Intune enforces a default limit policy otherwise; the configurable range is 1-15 devices ([restriction overview](https://learn.microsoft.com/en-us/intune/device-enrollment/restrictions)).
+4. **Device limit.** Go to **Devices** > **Enrollment** > **Windows** > **Device limit restriction** > **Create restriction** ([device limits](https://learn.microsoft.com/en-us/intune/intune-service/enrollment/create-device-limit-restrictions)): name it `LIM-Pilot`, set **Device limit** to **5**, assign it to the pilot group. Microsoft documents that the default policy applies to all enrollments until a higher-priority policy is assigned, and that the configurable range is 1-15 devices. The docs do not state whether the cap applies to devices enrolled via GPO-based automatic enrollment, so treat it as a general guardrail and verify its behavior on CLIENT01 during section 7 validation.
 
-**Expected result.** The tenant will auto-enroll pilot users' hybrid-joined devices, block personal Windows enrollment, and cap pilot users at 5 devices.
+**Expected result.** The tenant will auto-enroll pilot users' hybrid-joined devices and block personal Windows enrollment; the device limit acts as a general guardrail — confirm on CLIENT01 whether it is enforced for GPO-based enrollment.
 
 **Evidence.** E-04 — Automatic Enrollment blade + restriction policies.
 
@@ -341,10 +341,11 @@ Before starting, read `docs/environment-and-assumptions.md` and keep `docs/evide
 3. On **Configuration settings**, select **Add settings**, search for **OneDrive**, and in the OneDrive category select:
    | Setting | Value |
    |---|---|
+   | Silently sign in users to the OneDrive sync app with their Windows credentials | Enable |
    | Silently move Windows known folders to OneDrive | Enable |
    | Tenant ID | the tenant GUID of `beginningdimension.onmicrosoft.com` (find it in Entra admin center > Overview) |
 
-   Enabling the master setting reveals its sub-settings — one per folder plus notification and tenant ID (the Settings Catalog OneDrive procedure is documented in [Configure settings with Intune](https://learn.microsoft.com/en-us/sharepoint/configure-sync-intune)); configure them: **Desktop** = True, **Documents** = True, **Pictures** = True, **Show notification to users after folders have been redirected** = No. KFM requirements per Microsoft: devices must be Entra joined/hybrid joined, the user must have a OneDrive with sufficient quota, and users must be synced with the latest OneDrive build ([Known Folder Move overview](https://learn.microsoft.com/en-us/onedrive/redirect-known-folders)).
+   Silent sign-in matters here: it lets OneDrive authenticate with the user's Windows credentials so the known-folder move can happen without interaction. Enabling the KFM master setting reveals its sub-settings — one per folder plus notification and tenant ID (the full Settings Catalog table is documented in Microsoft's KFM settings reference ([OneDrive Known Folder Move settings](https://learn.microsoft.com/en-us/intune/solutions/education/tutorial-school-deployment/ref-onedrive-knownfoldermove-settings-windows); the Settings Catalog OneDrive procedure is in [Configure settings with Intune](https://learn.microsoft.com/en-us/sharepoint/configure-sync-intune))); configure them: **Desktop** = True, **Documents** = True, **Pictures** = True, **Show notification to users after folders have been redirected** = No. KFM requirements per Microsoft: devices must be Entra joined/hybrid joined, the user must have a OneDrive with sufficient quota, and users must be synced with the latest OneDrive build ([Known Folder Move overview](https://learn.microsoft.com/en-us/onedrive/redirect-known-folders)).
 
    Lab decision: KFM moves Desktop/Documents/Pictures into the user's OneDrive; `jdoe` needs storage quota from the Business Premium license. Continue through the wizard, assign to the same group, and **Review + create**.
 4. Verify on CLIENT01: Devices > Manage devices > Configuration > each profile > **Device assignment status** shows CLIENT01 "Succeeded". For the restrictions profile, test one visible setting (e.g., Bluetooth is not discoverable).
@@ -450,14 +451,30 @@ Before starting, read `docs/environment-and-assumptions.md` and keep `docs/evide
 
 **Purpose.** Demonstrate MSIX deployment, the modern Windows app format. Intune supports MSIX packages as line-of-business apps ([manage MSIX deployment with Intune](https://learn.microsoft.com/en-us/windows/msix/desktop/managing-your-msix-deployment-intune)).
 
-**Prerequisites.** The MSIX package must be **signed**, and the signing certificate must be trusted by the devices — for a self-signed lab certificate that means distributing it with a Trusted Certificate configuration profile before (or at the same time as) the app is assigned ([MSIX deployment](https://learn.microsoft.com/en-us/windows/msix/desktop/managing-your-msix-deployment-intune)).
+**Prerequisites.** The MSIX package must be **signed**, and the signing certificate must be trusted by the devices — for a self-signed lab certificate that means distributing it with a Trusted Certificate configuration profile before (or at the same time as) the app is assigned ([MSIX deployment](https://learn.microsoft.com/en-us/windows/msix/desktop/managing-your-msix-deployment-intune)). The package manifest's **Publisher must match the signing certificate's Subject** — MSIX signing fails or the install is rejected otherwise ([MSIX troubleshooting](https://learn.microsoft.com/en-us/windows/msix/msix-troubleshooting-guide)).
 
-**Produce a signed MSIX (lab decision — concrete workflow).** Any repackaged app works; the lab uses the same 7-Zip installer staged for 15b so the Win32 and MSIX paths deliver comparable payloads:
+**Produce a signed MSIX (lab decision — concrete workflow).** Any repackaged app works; the lab uses the same 7-Zip installer staged for 15b so the Win32 and MSIX paths deliver comparable payloads. Local certificate and package preparation are prerequisites (not counted in the ratio):
 
 1. On an admin workstation, install the **MSIX Packaging Tool** from the Microsoft Store.
-2. Create a self-signed signing certificate: `New-SelfSignedCertificate -Type CodeSigningCert -Subject "CN=BD Lab MSIX Signing" -CertStoreLocation Cert:\CurrentUser\My`, export the public half to `BDLabMSIX.cer`, and the full cert with private key to a PFX kept offline.
-3. In the MSIX Packaging Tool, choose **Application package** > create package on this machine, point it at `C:\Staging\7zip\7z2409-x64.msi`, fill the installer's details, and produce the `.msix`.
-4. Sign it with `SignTool` (from the Windows SDK): `signtool sign /fd SHA256 /sha1 <cert-thumbprint> <package>.msix`.
+2. Create a self-signed signing certificate per Microsoft's documented procedure ([create a certificate for package signing](https://learn.microsoft.com/en-us/windows/msix/package/create-certificate-package-signing)):
+   ```powershell
+   New-SelfSignedCertificate -Type Custom -KeyUsage DigitalSignature `
+     -Subject "CN=BD Lab MSIX Signing" -CertStoreLocation "Cert:\CurrentUser\My" `
+     -TextExtension @("2.5.29.37={text}1.3.6.1.5.5.7.3.3", "2.5.29.19={text}")
+   ```
+   Export the public half for the trust profile and the private half for signing ([create a certificate](https://learn.microsoft.com/en-us/windows/msix/package/create-certificate-package-signing)):
+   ```powershell
+   $cert = Get-ChildItem Cert:\CurrentUser\My | Where-Object Subject -eq "CN=BD Lab MSIX Signing"
+   Export-Certificate -Cert $cert -FilePath C:\Staging\BDLabMSIX.cer
+   Export-PfxCertificate -Cert $cert -FilePath C:\Staging\BDLabMSIX.pfx `
+     -Password (Read-Host -AsSecureString "PFX password")
+   ```
+   Keep the PFX offline after signing.
+3. In the MSIX Packaging Tool, choose **Application package** > create package on this machine, point it at `C:\Staging\7zip\7z2409-x64.msi`, fill the installer's details, and — critically — set the package **Publisher** to exactly `CN=BD Lab MSIX Signing` so it matches the certificate subject. Produce the `.msix`.
+4. Sign it with `SignTool` (Windows SDK) per Microsoft's documented procedure ([sign an app package using SignTool](https://learn.microsoft.com/en-us/windows/msix/package/sign-app-package-using-signtool)):
+   ```powershell
+   signtool sign /fd SHA256 /sha1 <cert-thumbprint> C:\Staging\output\7zip.msix
+   ```
 
 **Deploy via Intune.**
 
@@ -477,25 +494,25 @@ Before starting, read `docs/environment-and-assumptions.md` and keep `docs/evide
 
 **Purpose.** Gate cloud access on MFA and device compliance.
 
-**Prerequisites.** Conditional Access requires Entra ID P1/P2 ([Conditional Access with Intune](https://learn.microsoft.com/en-us/mem/intune/protect/conditional-access-intune-common-ways-use)) — included in Business Premium. If the tenant has security defaults enabled, they must be turned off before defining custom Conditional Access policies (both enforce baseline protections and are not meant to run together). Plan the cutover deliberately, never mid-task: confirm the break-glass account's access first, disable security defaults, and immediately set `CA-MFA-AllUsers` to **On** and promote it to **All users** so MFA coverage is continuous — the compliant-device policy stays pilot-scoped during validation ([security defaults](https://learn.microsoft.com/en-us/entra/fundamentals/security-defaults)). Always exclude the break-glass account from every policy.
+**Prerequisites.** Conditional Access requires Entra ID P1/P2 ([Conditional Access with Intune](https://learn.microsoft.com/en-us/mem/intune/protect/conditional-access-intune-common-ways-use)) — included in Business Premium. If the tenant has security defaults enabled, they must be off before your custom policies take effect (security defaults and custom Conditional Access are not meant to run together). Plan that cutover deliberately — never mid-task: confirm the break-glass account's access first, then disable security defaults, then immediately turn on the MFA policy (step 5 below) so MFA coverage is continuous from that moment. Always exclude the break-glass account from every policy ([security defaults](https://learn.microsoft.com/en-us/entra/fundamentals/security-defaults)).
 
 **Steps.**
 
-1. Open the [Intune admin center](https://intune.microsoft.com) and open its **Conditional Access** node, then select **New policy** — Microsoft documents that device-based Conditional Access policies for Microsoft 365 products are configured through the Intune admin center, and that the Conditional Access node accessed from Intune is the same node as in the Entra admin center ([Conditional Access with Intune](https://learn.microsoft.com/en-us/mem/intune/protect/conditional-access-intune-common-ways-use)). (The equivalent Entra path is entra.microsoft.com > **Protection** > **Conditional Access**.)
+1. **Create both policies in report-only while still pilot-scoped** (defining policies is safe at any time — report-only mode does not enforce). Open the [Intune admin center](https://intune.microsoft.com) and open its **Conditional Access** node, then select **New policy** — Microsoft documents that device-based Conditional Access policies for Microsoft 365 products are configured through the Intune admin center, and that the Conditional Access node accessed from Intune is the same node as in the Entra admin center ([Conditional Access with Intune](https://learn.microsoft.com/en-us/mem/intune/protect/conditional-access-intune-common-ways-use)). (The equivalent Entra path is entra.microsoft.com > **Protection** > **Conditional Access**.)
 2. **Policy 1 — `CA-MFA-AllUsers`**:
-   - **Users**: Include `GRP-INT-Pilot-Users` (pilot scope for validation; promote to **All users** only after testing — the same pattern Microsoft's own "approved apps or app protection" template uses when rolling out to all users ([approved apps/app protection template](https://learn.microsoft.com/en-us/entra/identity/conditional-access/policy-all-users-approved-app-or-app-protection))); Exclude the break-glass account regardless of scope.
+   - **Users**: Include `GRP-INT-Pilot-Users` (pilot scope for validation; the promotion to **All users** happens at the security-defaults cutover in step 5 — the same pattern Microsoft's own "approved apps or app protection" template uses when rolling out to all users ([approved apps/app protection template](https://learn.microsoft.com/en-us/entra/identity/conditional-access/policy-all-users-approved-app-or-app-protection))); Exclude the break-glass account regardless of scope.
    - **Target resources**: **All resources** (all cloud apps).
    - **Grant**: **Grant access** > **Require multifactor authentication**.
-   - **Enable policy**: **Report-only** first. **Create**.
+   - **Enable policy**: **Report-only**. **Create**.
 3. **Policy 2 — `CA-RequireCompliantDevice`**:
    - **Users**: `GRP-INT-Pilot-Users`; exclude break-glass.
    - **Target resources**: All resources (lab decision: start with Exchange Online and SharePoint Online if you want to test on specific services first).
    - **Grant**: **Grant access** > **Require device to be marked as compliant** (Intune compliance status flows to Entra ID for this control ([Conditional Access with Intune](https://learn.microsoft.com/en-us/mem/intune/protect/conditional-access-intune-common-ways-use))).
    - **Enable policy**: **Report-only**. **Create**.
-4. Test in report-only: sign in as `jdoe` to a target service, then check **Monitoring** > **Sign-in logs** > the sign-in event > **Conditional Access** tab — both policies appear with "Report-only: Success/Failure" results ([report-only behavior](https://learn.microsoft.com/en-us/entra/identity/conditional-access/policy-all-users-approved-app-or-app-protection)).
-5. Remediate any report-only failures (e.g., device not yet compliant because BitLocker finished but no reboot happened), then set both policies to **On** — still at pilot scope.
-6. Prove enforcement: from CLIENT01 (compliant), access succeeds; from an unmanaged device (e.g., a phone browser), access is blocked with the "compliant device" message.
-7. Promotion (lab decision gate): once both policies behave at pilot scope, re-target each policy's **Users** include to **All users**, keeping the break-glass exclusion, and keep an eye on sign-in logs during the first day.
+4. **Validate in report-only**: sign in as `jdoe` to a target service, then check **Monitoring** > **Sign-in logs** > the sign-in event > **Conditional Access** tab — both policies appear with "Report-only: Success/Failure" results ([report-only behavior](https://learn.microsoft.com/en-us/entra/identity/conditional-access/policy-all-users-approved-app-or-app-protection)). Remediate any report-only failures (e.g., device not yet compliant because BitLocker finished but no reboot happened).
+5. **Security-defaults cutover (if enabled).** With the pilot validation in hand: confirm the break-glass account's access, disable security defaults, and immediately — same session — set `CA-MFA-AllUsers` to **On** and change its **Users** include to **All users** (keeping the break-glass exclusion). MFA coverage is continuous from that moment. Set `CA-RequireCompliantDevice` to **On** but leave it pilot-scoped while you validate enforcement.
+6. **Prove enforcement**: from CLIENT01 (compliant), access succeeds; from an unmanaged device (e.g., a phone browser), access is blocked with the "compliant device" message.
+7. **Promote the compliant-device gate (lab decision gate).** Once enforcement behaves at pilot scope, change `CA-RequireCompliantDevice`'s **Users** include to **All users** (keeping the break-glass exclusion), and watch the sign-in logs for a day.
 
 **Expected result.** Cloud access requires MFA and a compliant, Intune-managed device.
 

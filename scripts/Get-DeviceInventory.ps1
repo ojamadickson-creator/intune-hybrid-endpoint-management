@@ -83,7 +83,9 @@ try {
     $writeOk = ($item.Length -gt $sizeBefore) -and ($null -ne $parsed) -and ($parsed.Timestamp -eq $inventory.Timestamp)
 }
 catch {
-    Write-Error "Inventory log could not be written to '$LogPath': $($_.Exception.Message)"
+    # -ErrorAction Continue is explicit: under $ErrorActionPreference = 'Stop' a plain
+    # Write-Error would itself throw and crash out of this catch block.
+    Write-Error "Inventory log could not be written to '$LogPath': $($_.Exception.Message)" -ErrorAction Continue
 }
 
 if ($writeOk) { exit 0 } else { exit 1 }
