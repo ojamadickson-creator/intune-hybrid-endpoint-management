@@ -14,7 +14,7 @@ intune-hybrid-endpoint-management/
 │   ├── architecture.md                component and Zero Trust flow breakdown
 │   ├── step-by-step-guide.md          the work packages, GUI + PowerShell
 │   ├── environment-and-assumptions.md existing AD/tenant facts + design decisions
-│   ├── implementation-ledger.md        the 80/20 ratio, package by package
+│   ├── implementation-ledger.md        the package by package
 │   ├── verification-manifest.md       every configured setting with its Microsoft Learn source
 │   ├── settings-ownership.md           who owns which setting (GPO vs Intune)
 │   ├── evidence-checklist.md           screenshot + redaction plan per work package
@@ -58,14 +58,14 @@ Phase 6  Enforcement      Conditional Access (report-only -> on): MFA + complian
 Phase 7  Operations       Graph reporting, on-demand sync, bulk assignment, troubleshooting
 ```
 
-The exhaustive, click-by-click procedure is [docs/step-by-step-guide.md](docs/step-by-step-guide.md) — 20 Intune work packages plus foundation prerequisites, each verified against Microsoft Learn with the source link inline.
+The exhaustive, click-by-click procedure is [docs/step-by-step-guide.md](docs/step-by-step-guide.md) — 20 Intune work packages plus foundation prerequisites.
 
-## Implementation Ratio: 80% Intune Admin Center / 20% PowerShell
+## Implementation Ratio: Intune Admin Center /  PowerShell
 
 The Intune implementation is split so the ratio is auditable, not claimed — see [docs/implementation-ledger.md](docs/implementation-ledger.md) for the counting rules:
 
-- **16 work packages (80%)** are configured in the **Microsoft Intune admin center** (its Conditional Access node included) — enrollment, compliance, custom compliance, security baseline, endpoint security (antivirus/firewall), BitLocker, configuration profiles, update rings, apps, and Conditional Access.
-- **4 work packages (20%)** are PowerShell: one local packaging script (wrapping the Microsoft Win32 content prep tool), one Graph PowerShell SDK reporting script, and two scripts that execute on managed devices through Intune's platform-script and custom-compliance features.
+- **16 work packages ** are configured in the **Microsoft Intune admin center** (its Conditional Access node included) — enrollment, compliance, custom compliance, security baseline, endpoint security (antivirus/firewall), BitLocker, configuration profiles, update rings, apps, and Conditional Access.
+- **4 work packages ** are PowerShell: one local packaging script (wrapping the Microsoft Win32 content prep tool), one Graph PowerShell SDK reporting script, and two scripts that execute on managed devices through Intune's platform-script and custom-compliance features.
 
 | Script | Where it runs | Purpose |
 |---|---|---|
@@ -74,7 +74,7 @@ The Intune implementation is split so the ratio is auditable, not claimed — se
 | [Get-DeviceInventory.ps1](scripts/Get-DeviceInventory.ps1) | Managed device (platform script) | Inventory snapshot with exit codes reported to Intune |
 | [Test-CustomCompliance.ps1](scripts/Test-CustomCompliance.ps1) + [custom-compliance-rules.json](scripts/custom-compliance-rules.json) | Managed device (custom compliance) | RDP/SMBv1 discovery with fail-safe JSON rules |
 
-Tenant setup, Entra Connect, hybrid join, the Defender for Business portal connection, the enrollment GPO, and dynamic groups are **foundation prerequisites outside the ratio** — disclosed in the ledger, not hidden in the count. The four PowerShell packages that make up the 20% (P1-P4 in the ledger: sections 17, 18, 15c, and 9) are all mandatory. Sections 19 and 20 ([Sync-IntuneDevices.ps1](scripts/Sync-IntuneDevices.ps1), [Add-IntuneBulkAssignment.ps1](scripts/Add-IntuneBulkAssignment.ps1)) are additional operational utilities beyond the ratio — useful in the lab, not needed for the count.
+Tenant setup, Entra Connect, hybrid join, the Defender for Business portal connection, the enrollment GPO, and dynamic groups are **foundation prerequisites outside the ratio** — disclosed in the ledger, not hidden in the count. The four PowerShell packages (P1-P4 in the ledger: sections 17, 18, 15c, and 9) are all mandatory. Sections 19 and 20 ([Sync-IntuneDevices.ps1](scripts/Sync-IntuneDevices.ps1), [Add-IntuneBulkAssignment.ps1](scripts/Add-IntuneBulkAssignment.ps1)) are additional operational utilities beyond the ratio — useful in the lab, not needed for the count.
 
 ## Security and Compliance Objectives
 
