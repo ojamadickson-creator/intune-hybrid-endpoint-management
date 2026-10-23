@@ -14,7 +14,7 @@ The on-premises estate is the Active Directory forest deployed in the companion 
 | DC01 | `192.168.10.10` — primary DC, DNS, Global Catalog, initial FSMO roles |
 | DC02 | `192.168.10.11` — replica DC, DNS, Global Catalog |
 | Gateway | `192.168.10.1` |
-| CLIENT01 | `192.168.10.20` — Windows 11 Pro, domain-joined, in `Beginningdimension\Computers\Workstations` |
+| CLIENT01 | `192.168.10.20` — Windows 11 Enterprise, domain-joined, in `Beginningdimension\Computers\Workstations` |
 | OU design | `Beginningdimension` > `Users`, `Computers\Workstations`, `Computers\Laptops`, `Servers`, `Groups\SecurityGroups`, `ServiceAccounts`, `Admin\Tier0`, `Pilot` |
 | Standard user | `jdoe` (in `Users`) |
 | Privileged user | `adm_jdoe` (in `Admin\Tier0`) |
