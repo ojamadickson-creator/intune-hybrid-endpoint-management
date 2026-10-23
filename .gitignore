@@ -1,0 +1,21 @@
+# Local evidence staging - keep screenshots out of commits until reviewed
+evidence/*.local
+
+# PowerShell tooling
+*.ps1.old
+*.intunewin
+
+# Script outputs and logs - generated, not source
+*.log
+scripts/output/
+output/
+*.csv
+*.html
+*.intunewin
+
+# Transcripts may contain tenant data
+*.transcript
+
+# OS noise
+.DS_Store
+Thumbs.db

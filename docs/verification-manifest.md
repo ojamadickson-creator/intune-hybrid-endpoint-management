@@ -1,0 +1,83 @@
+# Verification Manifest
+
+Every setting, path, and prerequisite configured in this project, with the Microsoft Learn source used to verify it. All entries were checked against the linked pages in October 2026; re-verify at execution time — Intune's admin center UI and baselines change continuously, and time-sensitive values (OS builds, tool versions) move. "Applicability" notes how the doc statement applies to this project's choices; **lab decision** rows are design choices not mandated by Microsoft.
+
+## Foundation (Prerequisites)
+
+| Procedure | Field / path | Value / choice | Applicability | Source | Checked |
+|---|---|---|---|---|---|
+| Licensing | Business Premium inclusions | Intune Plan 1, Entra ID P1, Defender for Business | Confirms the whole license footprint | [Microsoft 365 for business security overview](https://learn.microsoft.com/en-us/microsoft-365/admin/security-and-compliance/m365b-security-overview?view=o365-worldwide) | 2026-10 |
+| Emergency access accounts | Guidance for break-glass | 2+ cloud-only accounts, permanent Global Admin, distinct auth method (passkey/FIDO2 or CBA), separate secure locations, excluded from CA, alerts monitored, validated ≤90 days | Follows Microsoft's emergency-access guidance | [Manage emergency access accounts](https://learn.microsoft.com/en-us/entra/identity/role-based-access-control/security-emergency-access) | 2026-10 |
+| UPN suffix | Unverified UPN suffix behavior | Entra ID replaces the UPN with the default .onmicrosoft.com value after sync | Resolve before first sync | [Entra Connect user sign-in](https://learn.microsoft.com/en-us/entra/identity/hybrid/connect/plan-connect-user-signin) | 2026-10 |
+| Entra Connect install | Server prerequisites, PHS | Domain-joined full-GUI server (Server 2025/2022 recommended), .NET 4.6.2+ (4.8+ best), PS 5.0+, SQL Express LocalDB default | Install path and prerequisites | [Entra Connect prerequisites](https://learn.microsoft.com/en-us/entra/identity/hybrid/connect/how-to-connect-install-prerequisites) | 2026-10 |
+| OU filtering | Sync selected domains and OUs | Users, Computers, Groups\SecurityGroups only | **Lab decision** on scope; feature verified | [Configure filtering](https://learn.microsoft.com/en-us/entra/identity/hybrid/how-to-connect/configure-filtering) | 2026-10 |
+| Hybrid join | Configure device options > Entra hybrid join | SCP published, Windows 10 or later | Entra Connect 1.1.819.0+ (documented minimum), Hybrid Identity Admin + Enterprise Admin | [Hybrid join with Entra Connect](https://learn.microsoft.com/en-us/entra/identity/devices/how-to-hybrid-join) | 2026-10 |
+| SCP verification | Configuration partition query | `CN=Device Registration Configuration,CN=Services` | Discovery query; doc does not specify SCP verification steps — end-to-end proof is the device hybrid-joining | [Hybrid join](https://learn.microsoft.com/en-us/entra/identity/devices/how-to-hybrid-join) | 2026-10 |
+| Device unenrollment | Settings > Accounts > Access work or school > Disconnect | Documented user path for removing a device from management | Used in section 7 rollback; admin-side alternative is Retire | [Remove your Windows device from management](https://learn.microsoft.com/en-us/intune/intune-service/user-help/unenroll-your-device-from-intune-windows), [Retire](https://learn.microsoft.com/en-us/intune/intune-service/remote-actions/devices-wipe) | 2026-10 |
+| Defender for Business connection | Defender portal > Assets > Devices > Get started | Choose Intune; onboard Intune-enrolled devices | Portal wizard, MFA required first — counted as a prerequisite, not an Intune admin center package | [Defender for Business setup](https://learn.microsoft.com/en-us/defender-business/mdb-setup-configuration) | 2026-10 |
+| Security defaults | Disable before custom CA | Entra ID > Properties > Manage security defaults | Replacement CA (MFA for all users) enabled immediately at cutover | [Security defaults](https://learn.microsoft.com/en-us/entra/fundamentals/security-defaults) | 2026-10 |
+
+## Intune Admin Center (16 GUI packages)
+
+| Procedure | Field / path | Value / choice | Applicability | Source | Checked |
+|---|---|---|---|---|---|
+| G1 Automatic enrollment | Devices > Enrollment > Windows > Automatic Enrollment | MDM user scope: Some (pilot group); MAM: None | Required for hybrid-join auto-enrollment | [Windows enrollment](https://learn.microsoft.com/en-us/intune/intune-service/enrollment/windows-enroll) | 2026-10 |
+| G2 Platform restrictions | Devices > Enrollment > Device platform restrictions | Block personally owned Windows | GPO enrollment remains authorized | [Enrollment restrictions](https://learn.microsoft.com/en-us/intune/device-enrollment/restricts) | 2026-10 |
+| G2 Device limit | Devices > Enrollment > Windows > Device limit restriction | LIM-Pilot, 5 devices (range 1-15) | Default policy applies until higher-priority assigned; GPO-enrollment applicability not specified in docs — verify in lab | [Device limits](https://learn.microsoft.com/en-us/intune/intune-service/enrollment/create-device-limit-restrictions) | 2026-10 |
+| G3 Tenant compliance setting | Devices > Compliance > Compliance policy settings | No-policy devices = Non-compliant | Microsoft-recommended | [Compliance monitoring](https://learn.microsoft.com/en-us/intune/intune-service/protect/compliance-policy-monitor) | 2026-10 |
+| G3 Notification template | Devices > Compliance > Notifications > Create notification | Required before the email action can be selected | | [Actions for noncompliance](https://learn.microsoft.com/en-us/intune/intune-service/protect/actions-for-noncompliance) | 2026-10 |
+| G4 Compliance policy | Devices > Compliance > Policies | CMP-Win11-Health, Windows 10 and later | Values below | [Windows compliance settings](https://learn.microsoft.com/en-us/intune/intune-service/protect/compliance-policy-create-windows) | 2026-10 |
+| G4 Require BitLocker | Device health | Require | Measured at boot via Health Attestation; reboot may be needed | [Windows compliance settings](https://learn.microsoft.com/en-us/intune/intune-service/protect/compliance-policy-create-windows) | 2026-10 |
+| G4 Minimum OS | Device properties | 10.0.26200 (25H2) | **Lab decision** — as of Oct 2026, 24H2 Home/Pro is end-of-updates; 25H2 is the oldest supported Home/Pro build. Re-check at execution | [Windows 11 release information](https://learn.microsoft.com/en-us/windows/release-health/windows11-release-information) | 2026-10 |
+| G4 Firewall/AV compliance | System security > Device Security | Firewall/Antivirus/Antispyware: Require | GPO conflict note applies | [Windows compliance settings](https://learn.microsoft.com/en-us/intune/intune-service/protect/compliance-policy-create-windows) | 2026-10 |
+| G5 Custom compliance | Devices > Compliance > Scripts, then policy | Discovery script uploaded before policy | IME runs discovery on its check-in cycle + user-initiated check | [Custom compliance settings](https://learn.microsoft.com/en-us/intune/intune-service/protect/compliance-use-custom-settings) | 2026-10 |
+| G5 Rules JSON | SettingName/Operator/DataType/Operand | IsEquals on RdpDisabled/Smbv1Disabled | en_US remediation strings; operators IsEquals/NotEquals/GreaterThan/GreaterEquals/LessThan/LessEquals | [Custom compliance JSON](https://learn.microsoft.com/en-us/intune/intune-service/protect/compliance-custom-json) | 2026-10 |
+| G6 Security baseline | Endpoint security > Security baselines | SB-MDM-Win11, MDM baseline | Review every settings group; record version + changes | [Security baselines](https://learn.microsoft.com/en-us/intune/intune-service/protect/security-baselines-configure) | 2026-10 |
+| G6 Baseline versioning | Version handling | Read-only on update; assignments not carried | Re-assign after version update | [Security baselines](https://learn.microsoft.com/en-us/intune/intune-service/protect/security-baselines-configure) | 2026-10 |
+| G7 Antivirus policy | Endpoint security > Antivirus > Microsoft Defender Antivirus | ES-AV-Defender, real-time + cloud protection | | [Defender for Business setup](https://learn.microsoft.com/en-us/defender-business/mdb-setup-configuration) | 2026-10 |
+| G8 Firewall policy | Endpoint security > Firewall | ES-FW-Win11, profiles enabled | | [Windows compliance settings](https://learn.microsoft.com/en-us/intune/intune-service/protect/compliance-policy-create-windows) | 2026-10 |
+| G9 BitLocker | Endpoint security > Disk encryption > BitLocker | Silent-enablement values, Entra escrow | TPM 1.2+/UEFI prerequisites; user-context rules | [BitLocker policies](https://learn.microsoft.com/en-us/mem/intune/protect/encrypt-devices) | 2026-10 |
+| G10 Device restrictions | Devices > Configuration > Templates > Device restrictions | CFG-Workstation-Restrictions | | [Settings Catalog](https://learn.microsoft.com/en-us/mem/intune/configuration/settings-catalog) | 2026-10 |
+| G11 Settings Catalog KFM | Devices > Configuration > Settings catalog > OneDrive | Silently move known folders: Enable; sub-settings Desktop/Documents/Pictures: True; Show notification after redirect: No; Tenant ID: GUID | Requires Entra joined/hybrid joined, OneDrive quota, current sync app build | [Configure settings with Intune](https://learn.microsoft.com/en-us/sharepoint/configure-sync-intune), [Known Folder Move overview](https://learn.microsoft.com/en-us/onedrive/redirect-known-folders) | 2026-10 |
+| G12 Update rings | Devices > By platform > Windows > Manage updates | UPD-Win11-Ring1-Pilot | **GPO migration first** — set update-scoped GPO policies to Not Configured | [Update rings](https://learn.microsoft.com/en-us/intune/intune-service/protect/windows-10-update-rings) | 2026-10 |
+| G13 M365 Apps | Apps > All apps > Microsoft 365 Apps | XML config required for business edition; full `<Configuration>` root; `<RemoveMSI />` | Business edition must use XML | [Add Microsoft 365 Apps](https://learn.microsoft.com/en-us/intune/intune-service/apps/apps-add-office365) | 2026-10 |
+| G14 Win32 app | Apps > All apps > Windows app (Win32) | Detection: MSI product code; install behavior System | `.intunewin` from P1 | [Add Win32 apps](https://learn.microsoft.com/en-us/mem/intune/apps/apps-win32-add) | 2026-10 |
+| G14 Win32 prep | IntuneWinAppUtil -c -s -o | Quoted paths for spaces | | [Prepare Win32 content](https://learn.microsoft.com/en-us/mem/intune/apps/apps-win32-prepare) | 2026-10 |
+| G15 MSIX | Apps > All apps > Line-of-business app | Signed package; Trusted cert profile (Local Computer - Trusted People) before/at assignment; App install context: Device; 0x80073CF3 = newer version already installed | Self-signed lab cert workflow in guide 15d | [MSIX deployment with Intune](https://learn.microsoft.com/en-us/windows/msix/desktop/managing-your-msix-deployment-intune) | 2026-10 |
+| G16 Conditional Access | Intune admin center Conditional Access node | CA-MFA-AllUsers, CA-RequireCompliantDevice | Same node as Entra; device-based CA for M365 configured through Intune admin center; P1 required | [Conditional Access with Intune](https://learn.microsoft.com/en-us/mem/intune/protect/conditional-access-intune-common-ways-use) | 2026-10 |
+| G16 Report-only rollout | Enable policy: Report-only first | Pilot scope, break-glass excluded; MFA policy promoted to All users at security-defaults cutover | Pattern from Microsoft's template | [Approved apps or app protection template](https://learn.microsoft.com/en-us/entra/identity/conditional-access/policy-all-users-approved-app-or-app-protection) | 2026-10 |
+
+## On-Device PowerShell (delivered via Intune)
+
+| Procedure | Field / path | Value / choice | Applicability | Source | Checked |
+|---|---|---|---|---|---|
+| P3 Platform script | Devices > Scripts and remediations > Platform scripts | <200KB, system context, 64-bit host | Script runs when assigned/updated; IME 8-hour check-in cycle; exit codes reported to Intune | [PowerShell scripts](https://learn.microsoft.com/en-us/intune/intune-service/apps/powershell-scripts) | 2026-10 |
+| P4 Custom compliance discovery | Fail-safe JSON output | Unverifiable checks report false | stdout hygiene: JSON only; diagnostics to file | [Custom compliance settings](https://learn.microsoft.com/en-us/intune/intune-service/protect/compliance-use-custom-settings) | 2026-10 |
+
+## Graph PowerShell SDK
+
+| Procedure | Field / path | Value / choice | Applicability | Source | Checked |
+|---|---|---|---|---|---|
+| SDK setup | Install-Module Microsoft.Graph | Connect-MgGraph -Scopes | Find-MgGraphCommand for permissions; Invoke-MgGraph and Invoke-MgGraphRequest both available in current SDK versions | [Graph PowerShell SDK](https://learn.microsoft.com/en-us/powershell/microsoftgraph/get-started?view=graph-powershell-1.0) | 2026-10 |
+| P2 Compliance report | managedDevices + compliance states | CSV export, paginated | Read-only scopes | [Graph PowerShell SDK](https://learn.microsoft.com/en-us/powershell/microsoftgraph/get-started?view=graph-powershell-1.0) | 2026-10 |
+| Device sync action | POST .../managedDevices/{id}/syncDevice | Forces check-in, no timing guarantee | Optional utility | [Device sync](https://learn.microsoft.com/en-us/intune/intune-service/remote-actions/device-sync) | 2026-10 |
+
+## GPO / AD-Side Changes
+
+| Procedure | Field / path | Value / choice | Applicability | Source | Checked |
+|---|---|---|---|---|---|
+| Auto-enrollment GPO | Computer Config > Admin Templates > Windows Components > MDM | Enabled, User Credential | **Lab decision** on targeting Workstations OU | [GPO automatic enrollment](https://learn.microsoft.com/en-us/windows/client-management/enroll-a-windows-10-device-automatically-using-group-policy) | 2026-10 |
+| Enrollment diagnostics | Task Scheduler > Microsoft > Windows > EnterpriseMgmt | Task last-run results | Verification method | [GPO enrollment](https://learn.microsoft.com/en-us/windows/client-management/enroll-a-windows-10-device-automatically-using-group-policy) | 2026-10 |
+| Update GPO migration | Cfg-WindowsUpdate | Update-scoped policies to Not Configured; before/after gpresult + registry policy keys | Inspect GPO first — AD project describes it only as "update-management configuration" | [Update rings](https://learn.microsoft.com/en-us/intune/intune-service/protect/windows-10-update-rings) | 2026-10 |
+| Dynamic device groups | Rule text box (device rules) | deviceOSVersion startsWith 10.0.2 | P1 licensing included; device rules are text-box only | [Dynamic membership rules](https://learn.microsoft.com/en-us/entra/identity/users/groups-dynamic-membership) | 2026-10 |
+
+## Troubleshooting References
+
+| Area | Location | Source |
+|---|---|---|
+| IME logs | C:\ProgramData\Microsoft\IntuneManagementExtension\Logs | [Win32 troubleshooting](https://learn.microsoft.com/en-us/intune/app-management/deployment/troubleshoot-win32) |
+| MDM diagnostics export | C:\Users\Public\Public Documents\MDMDiagnostics | [Collect management logs](https://learn.microsoft.com/en-us/intune/user-help/diagnostics/collect-logs-settings-windows) |
+| Hybrid join verification | dsregcmd /status | [Hybrid join](https://learn.microsoft.com/en-us/entra/identity/devices/how-to-hybrid-join) |
+| CA sign-in logs | Monitoring > Sign-in logs > Conditional Access tab | [Report-only behavior](https://learn.microsoft.com/en-us/entra/identity/conditional-access/policy-all-users-approved-app-or-app-protection) |
+| Windows LAPS (kept in AD) | Intune LAPS policy exists but not deployed | [Windows LAPS policy](https://learn.microsoft.com/en-us/intune/intune-service/protect/windows-laps-policy) |
+| ESP (out of scope) | Enrollment Status Page for new devices only | [Windows enrollment status](https://learn.microsoft.com/en-us/mem/intune/enrollment/windows-enrollment-status) |
