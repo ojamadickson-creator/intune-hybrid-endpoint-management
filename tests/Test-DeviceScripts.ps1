@@ -4,9 +4,7 @@ $ErrorActionPreference = 'Stop'
 $root = Split-Path $PSScriptRoot -Parent
 $script1 = Join-Path $root 'scripts\Test-CustomCompliance.ps1'
 $script2 = Join-Path $root 'scripts\Get-DeviceInventory.ps1'
-$fail = 0
-
-function Assert-True { param($cond, $name) if ($cond) { Write-Output "OK   $name" } else { $global:fail = 1; Write-Output "FAIL $name" } }
+. (Join-Path $PSScriptRoot '_Common.ps1')
 
 # The scripts hard-code Windows paths (they run on Windows devices); on the Linux
 # test host, Join-Path cannot resolve the C: drive, so mock it to concatenate
@@ -91,4 +89,4 @@ $log2 = Join-Path ([System.IO.Path]::GetTempPath()) ('device-inventory-test-' + 
 $exit2 = $LASTEXITCODE
 Assert-True ($exit2 -eq 1) "inventory: exit code 1 when log write fails (got $exit2)"
 
-exit $fail
+exit $global:fail
