@@ -40,7 +40,7 @@
 
   <line x1="340" y1="322" x2="380" y2="322" stroke="#475569" stroke-width="1.5" stroke-dasharray="5 4" marker-end="url(#arrowGray)"/>
   <line x1="380" y1="350" x2="340" y2="350" stroke="#475569" stroke-width="1.5" stroke-dasharray="5 4" marker-end="url(#arrowGray)"/>
-  <text x="360" y="310" text-anchor="middle" font-size="11" fill="#64748b">replication</text>
+  <text x="360" y="282" text-anchor="middle" font-size="11" fill="#64748b">replication</text>
 
   <rect x="70" y="430" width="560" height="104" rx="8" fill="#ffffff" stroke="#94a3b8" stroke-width="1.2" stroke-dasharray="6 4"/>
   <text x="90" y="456" font-size="13" font-weight="bold" fill="#334155">Beginningdimension OUs + Group Policy</text>
@@ -105,12 +105,12 @@
 
   <!-- 3. Automatic MDM enrollment -->
   <path d="M 630 630 C 740 630, 810 575, 870 532" fill="none" stroke="#d97706" stroke-width="2.5" stroke-dasharray="8 5" marker-end="url(#arrowOrange)"/>
-  <text x="655" y="660" font-size="12" font-weight="bold" fill="#d97706">Automatic MDM enrollment</text>
-  <text x="655" y="676" font-size="11" fill="#b45309">GPO + MDM user scope</text>
+  <text x="672" y="660" font-size="12" font-weight="bold" fill="#d97706">Automatic MDM enrollment</text>
+  <text x="672" y="676" font-size="11" fill="#b45309">GPO + MDM user scope</text>
 
   <!-- 4. Policies back to device -->
   <path d="M 920 580 C 860 680, 760 715, 634 702" fill="none" stroke="#059669" stroke-width="2.5" marker-end="url(#arrowGreen)"/>
-  <text x="800" y="768" text-anchor="middle" font-size="12" font-weight="bold" fill="#059669">Policies · apps · updates · scripts</text>
+  <text x="750" y="768" text-anchor="middle" font-size="12" font-weight="bold" fill="#059669">Policies · apps · updates</text>
 
   <!-- 5. Compliance state -->
   <line x1="1112" y1="245" x2="1208" y2="245" stroke="#7c3aed" stroke-width="2.5" marker-end="url(#arrowPurple)"/>
