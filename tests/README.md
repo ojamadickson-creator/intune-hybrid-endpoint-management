@@ -1,6 +1,6 @@
 # Script Tests
 
-Static and functional checks for the PowerShell in `scripts/`. The functional tests mock the Windows-only cmdlets (registry, TPM, BitLocker, CIM) and the Microsoft Graph session cmdlets so every script can be exercised on any host, including Linux CI — no live tenant is required to run the suite.
+Static and functional checks for the PowerShell in `scripts/`. The functional tests replace the Windows-only cmdlets (registry, TPM, BitLocker, CIM) with mocks and replace the Microsoft Graph session cmdlets with a mocked Graph, so the scripts covered below run on any host, including Linux CI — no live tenant is required to run the suite. Scripts without behavioral tests here are parse-checked and exercised in the lab per the guide.
 
 Run all three:
 
@@ -17,10 +17,11 @@ Covered:
 - `Get-DeviceInventory.ps1` — successful run writes one JSON log line and exits 0; failed log write exits 1.
 - `Add-IntuneBulkAssignment.ps1` — exercised against a mocked `Invoke-MgGraph`/session cmdlet set:
   - happy path (no existing assignments) with a JSON-array backup file;
-  - merge behavior: already-assigned group skipped, exclusion targets and assignment-filter targets preserved verbatim;
+  - merge behavior: already-assigned group skipped (single-assignment no-op: no POST issued), exclusion targets and assignment-filter targets preserved verbatim;
   - `@odata.nextLink` pagination (all pages read before merging);
   - policy-not-found and ambiguous-policy-name errors (no POST on failure);
-  - OData single-quote escaping in `$filter` for policy and group names.
+  - OData single-quote escaping in `$filter` for policy and group names;
+  - backup JSON root verified as an array for zero, one, and multiple existing assignments.
 - Assertion helpers live in `tests/_Common.ps1`; every test script exits nonzero if any assertion fails (verified with an intentional failing assertion).
 
 `Sync-IntuneDevices.ps1` and `Get-IntuneComplianceReport.ps1` are parse-checked here; they are thin per-device wrappers over the same Graph patterns and are exercised in the lab per the guide.

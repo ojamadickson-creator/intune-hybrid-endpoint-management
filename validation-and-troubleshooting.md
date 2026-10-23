@@ -85,7 +85,7 @@ The tests that turn screenshots into a story:
 
 | Test | Do | Expected failure you can fix on camera |
 |---|---|---|
-| F1 | Temporarily raise the **Minimum OS version** in `CMP-Win11-Health` to one build above CLIENT01's current build (read the current value on the policy's **Configured settings** page first, e.g., `10.0.26200` → set `10.0.26300`) | CLIENT01 flips to Not compliant at the next evaluation with the OS version rule listed as failing; the compliant-device CA policy blocks access; reverting the value + sync restores compliance — a fully reversible test that never weakens protection |
+| F1 | Temporarily raise the **Minimum OS version** in `CMP-Win11-Health`: first record CLIENT01's actual reported OS version (device's **Hardware** page or `winver`) and the policy's currently configured minimum (policy's **Configured settings** page — these are two different numbers), then set the minimum to any valid value strictly greater than the observed device version (e.g., device reports `10.0.26200` → set `10.0.26300`) | CLIENT01 flips to Not compliant at the next evaluation with the OS version rule listed as failing; the compliant-device CA policy blocks access; restoring the recorded original minimum + sync restores compliance — a fully reversible test that never weakens protection |
 | F2 | Temporarily change the custom-compliance JSON operand for `Smbv1Disabled` from `true` to `false` | CLIENT01 fails the custom rule and is marked non-compliant; restoring the operand and re-checking compliance recovers it |
 | F3 | Sign in from an unmanaged device (phone browser) | CA-RequireCompliantDevice blocks with the remediation message |
 | F4 | Uninstall 7-Zip | Intune re-installs it at next app evaluation cycle |

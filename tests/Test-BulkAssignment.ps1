@@ -17,7 +17,7 @@ function global:Get-Module {
     if ($ListAvailable -and $Name -eq 'Microsoft.Graph.Authentication') {
         return [pscustomobject]@{ Name = 'Microsoft.Graph.Authentication'; Version = '2.0.0' }
     }
-    return & $global:RealGetModule -Name $Name @PSBoundParameters
+    return & $global:RealGetModule @PSBoundParameters
 }
 function global:Import-Module { param($Name, $ErrorAction) } # no-op: modules are not needed with mocks
 function global:Connect-MgGraph { param($TenantId, $Scopes, [switch]$NoWelcome) }
@@ -98,8 +98,10 @@ Assert-Equal 'grp-pilot' $targets[0].groupId 'T1: posted target is the requested
 Assert-Equal '#microsoft.graph.groupAssignmentTarget' $targets[0].'@odata.type' 'T1: posted target is a group assignment target'
 $backup = Get-ChildItem -LiteralPath $bk1 -Filter 'assignments-backup-*.json'
 Assert-Equal 1 @($backup).Count 'T1: one backup file written'
-$parsed = Get-Content -LiteralPath $backup[0].FullName -Raw | ConvertFrom-Json
-Assert-True (@($parsed).Count -eq 0) 'T1: backup of empty assignment list is a JSON array with zero elements'
+$raw = Get-Content -LiteralPath $backup[0].FullName -Raw
+Assert-True ($raw.TrimStart().StartsWith('[')) 'T1: backup root is a JSON array'
+$parsed = @($raw | ConvertFrom-Json)
+Assert-True (($parsed -is [array]) -and ($parsed.Count -eq 0)) 'T1: backup of empty assignment list is a JSON array with zero elements'
 Remove-Item -LiteralPath $bk1 -Recurse -Force
 
 # --- T2: existing group skipped; exclusion and filter targets preserved verbatim ---
@@ -127,9 +129,11 @@ Assert-Equal 'f1' $filt[0].deviceAndAppManagementAssignmentFilterId 'T2: assignm
 Assert-Equal 'include' $filt[0].deviceAndAppManagementAssignmentFilterType 'T2: assignment filter type preserved'
 Assert-True ((@($targets | Where-Object { $_.groupId -eq 'grp-pilot' }).Count -eq 1) -and (@($targets | Where-Object { $_.groupId -eq 'grp-corp' }).Count -eq 1)) 'T2: already-assigned group not duplicated, new group added once'
 $backup = Get-ChildItem -LiteralPath $bk2 -Filter 'assignments-backup-*.json'
-$parsed = Get-Content -LiteralPath $backup[0].FullName -Raw | ConvertFrom-Json
+$raw = Get-Content -LiteralPath $backup[0].FullName -Raw
+Assert-True ($raw.TrimStart().StartsWith('[')) 'T2: backup root is a JSON array'
+$parsed = @($raw | ConvertFrom-Json)
 Assert-True ($parsed -is [array]) 'T2: backup file parses as a JSON array'
-Assert-Equal 3 @($parsed).Count 'T2: backup contains all three pre-existing assignments'
+Assert-Equal 3 $parsed.Count 'T2: backup contains all three pre-existing assignments'
 Remove-Item -LiteralPath $bk2 -Recurse -Force
 
 # --- T3: @odata.nextLink pagination - all pages read before merging ---
@@ -148,6 +152,23 @@ $targets = @($global:PostedAssign.assignments | ForEach-Object { $_.target })
 Assert-Equal 4 $targets.Count 'T3: 2 pages (3 existing) + 1 new = 4 posted'
 Assert-True (($targets | Where-Object { $_.groupId -eq 'grp-a' }) -and ($targets | Where-Object { $_.groupId -eq 'grp-c' })) 'T3: targets from both pages included'
 Remove-Item -LiteralPath $bk3 -Recurse -Force
+
+# --- T7: single existing assignment, requested group already assigned -> no-op ---
+$bk7 = Join-Path ([System.IO.Path]::GetTempPath()) ('bulk-test-' + [guid]::NewGuid().ToString())
+$null = New-Item -ItemType Directory -Path $bk7 -Force
+Reset-Mock -Policies @{ 'CMP-Win11-Health' = @(New-Policy 'pol-1') } `
+    -Groups @{ 'GRP-INT-Pilot-Devices' = @(New-Group 'grp-pilot') } `
+    -Page1 @{ value = @((New-Assignment (GroupTarget 'grp-pilot'))) }
+Invoke-Subject -PolicyName 'CMP-Win11-Health' -GroupNames 'GRP-INT-Pilot-Devices' -BackupPath $bk7
+Assert-True ($null -eq $global:SubjectThrew) 'T7: already-assigned group is a no-op, not an error'
+Assert-True ($null -eq $global:PostedAssign) 'T7: no assign POST when nothing needs adding'
+Assert-True (@($global:Requests | Where-Object { $_.Method -eq 'POST' }).Count -eq 0) 'T7: zero POST requests issued'
+$backup = Get-ChildItem -LiteralPath $bk7 -Filter 'assignments-backup-*.json'
+$raw = Get-Content -LiteralPath $backup[0].FullName -Raw
+Assert-True ($raw.TrimStart().StartsWith('[')) 'T7: backup root is a JSON array'
+$parsed = @($raw | ConvertFrom-Json)
+Assert-True (($parsed -is [array]) -and ($parsed.Count -eq 1)) 'T7: backup of a single assignment is a JSON array with one element'
+Remove-Item -LiteralPath $bk7 -Recurse -Force
 
 # --- T4: policy not found -> script throws, nothing posted ---
 $bk4 = Join-Path ([System.IO.Path]::GetTempPath()) ('bulk-test-' + [guid]::NewGuid().ToString())

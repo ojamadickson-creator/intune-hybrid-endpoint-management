@@ -34,8 +34,9 @@
       DeviceManagementConfiguration.ReadWrite.All
       Group.Read.All
 
-    The script resolves the invoke cmdlet by name so it works with both SDK generations
-    (Invoke-MgGraph in SDK v2, Invoke-MgGraphRequest in v1).
+    The script resolves the invoke cmdlet by name (Invoke-MgGraph in current SDK
+    releases; Invoke-MgGraphRequest also ships in current Microsoft.Graph.Authentication
+    releases), which keeps it working across module versions.
 #>
 [CmdletBinding()]
 param(
