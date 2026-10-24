@@ -129,6 +129,13 @@ Before starting, read `docs/environment-and-assumptions.md` and keep `docs/evide
 4. Open **Enable automatic MDM enrollment using default Microsoft Entra credentials**: set to **Enabled**, and under **Select Credential Type to Use** choose **User Credential**. ([GPO-based automatic enrollment](https://learn.microsoft.com/en-us/windows/client-management/enroll-a-windows-10-device-automatically-using-group-policy))
 5. Close the editor. Confirm the GPO is linked to **Workstations** (CLIENT01's OU) and note the link order.
 6. On CLIENT01, run `gpupdate /force`, then verify with `gpresult /r` that `Cfg-AutoMDMEnrollment` is in the Applied GPO list.
+How to Verify the Computer Policy Properly:
+To confirm that Cfg-AutoMDMEnrollment successfully applied to the workstation itself (CLIENT01), check the Computer Settings scope instead:
+
+Open Command Prompt as Administrator on CLIENT01.
+
+Run the following command to filter specifically for computer policies:
+````gpresult /scope computer /r````
 
 **Expected result.** At the next sign-in or policy refresh, CLIENT01 starts MDM enrollment using `jdoe`'s Entra credentials.
 
