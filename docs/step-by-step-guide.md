@@ -1,7 +1,6 @@
 # Step-by-Step Implementation Guide
 
-This guide implements the project as 20 Intune work packages — 16 in the Microsoft Intune admin center and 4 in PowerShell — plus foundation prerequisites outside that ratio (see `docs/implementation-ledger.md` for the counting rules). Every setting, path, and prerequisite below was checked against Microsoft Learn; the source link appears next to each procedure. Anything marked **lab decision** is a design choice for this environment, not a Microsoft-documented requirement.
-
+This guide implements the project as 20 Intune work packages — 16 in the Microsoft Intune admin center and 4 in PowerShell — plus foundation prerequisites outside that ratio (see `docs/implementation-ledger.md` for the counting rules). 
 A settings-verification manifest recording each configured field with its supporting Microsoft Learn URL is in `docs/verification-manifest.md`.
 
 Before starting, read `docs/environment-and-assumptions.md` and keep `docs/evidence-checklist.md` open — each section ends with the evidence item to capture.
