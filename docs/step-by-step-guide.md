@@ -314,8 +314,8 @@ Run the following command to filter specifically for computer policies:
    | Configure TPM startup PIN | Do not allow startup PIN with TPM |
    | Configure TPM startup key | Do not allow startup key with TPM |
    | Configure TPM startup key and PIN | Do not allow startup key and PIN with TPM |
-   | Save BitLocker recovery information to Microsoft Entra ID | Enabled |
-   | Store recovery information in Microsoft Entra ID before enabling BitLocker | Required |
+   | Save BitLocker recovery information to AD DS for operating system drives| Enabled |
+   | Do not enable BitLocker until recovery information is stored to AD DS for operating system drives | Required |
    | Client-driven recovery password rotation | Enable rotation on Microsoft Entra joined and Microsoft Entra hybrid joined devices |
 3. Assign to `GRP-INT-Pilot-Devices` (pilot first). Review + create.
 4. On CLIENT01: run the sync script (section 19) or Settings > Info > **Sync**, then watch for silent encryption to start. Verify with `manage-bde -status` (elevated).
