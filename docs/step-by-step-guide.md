@@ -453,45 +453,6 @@ Run the following command to filter specifically for computer policies:
 
 **Rollback.** Uninstall assignments or set to Uninstall; delete the script entry.
 
-#### 15d. MSIX line-of-business app (fourth app-delivery path)
-
-**Purpose.** Demonstrate MSIX deployment, the modern Windows app format. Intune supports MSIX packages as line-of-business apps ([manage MSIX deployment with Intune](https://learn.microsoft.com/en-us/windows/msix/desktop/managing-your-msix-deployment-intune)).
-
-**Prerequisites.** The MSIX package must be **signed**, and the signing certificate must be trusted by the devices — for a self-signed lab certificate that means distributing it with a Trusted Certificate configuration profile before (or at the same time as) the app is assigned ([MSIX deployment](https://learn.microsoft.com/en-us/windows/msix/desktop/managing-your-msix-deployment-intune)). The package manifest's **Publisher must match the signing certificate's Subject** — MSIX signing fails or the install is rejected otherwise ([MSIX troubleshooting](https://learn.microsoft.com/en-us/windows/msix/msix-troubleshooting-guide)).
-
-**Produce a signed MSIX (lab decision — concrete workflow).** Any repackaged app works; the lab uses the same 7-Zip installer staged for 15b so the Win32 and MSIX paths deliver comparable payloads. Local certificate and package preparation are prerequisites (not counted in the ratio):
-
-1. On an admin workstation, install the **MSIX Packaging Tool** from the Microsoft Store.
-2. Create a self-signed signing certificate with the documented one-liner from the MSIX-with-Intune page ([MSIX deployment](https://learn.microsoft.com/en-us/windows/msix/desktop/managing-your-msix-deployment-intune)):
-   ```powershell
-   $cert = New-SelfSignedCertificate -Subject "CN=BD Lab MSIX Signing" -Type CodeSigningCert `
-     -CertStoreLocation "Cert:\CurrentUser\My" -HashAlgorithm SHA256
-   Export-Certificate -Cert $cert -FilePath C:\Staging\BDLabMSIX.cer
-   ```
-   Optionally export a PFX backup of the private key and keep it offline ([create a certificate for package signing](https://learn.microsoft.com/en-us/windows/msix/package/create-certificate-package-signing)):
-   ```powershell
-   Export-PfxCertificate -Cert $cert -FilePath C:\Staging\BDLabMSIX.pfx `
-     -Password (Read-Host -AsSecureString "PFX password")
-   ```
-3. In the MSIX Packaging Tool, choose **Application package** > create package on this machine, point it at `C:\Staging\7zip\7z2409-x64.msi`, fill the installer's details, and — critically — set the package **Publisher** to exactly `CN=BD Lab MSIX Signing` so it matches the certificate subject. Produce the `.msix`.
-4. Sign it with `SignTool` (Windows SDK) per Microsoft's documented procedure ([sign an app package using SignTool](https://learn.microsoft.com/en-us/windows/msix/package/sign-app-package-using-signtool)):
-   ```powershell
-   signtool sign /fd SHA256 /sha1 $cert.Thumbprint C:\Staging\output\7zip.msix
-   ```
-
-   Microsoft strongly recommends a code-signing service such as Azure Artifact Signing (formerly Trusted Signing) instead of self-signed certificates for production ([MSIX deployment](https://learn.microsoft.com/en-us/windows/msix/desktop/managing-your-msix-deployment-intune)) — the self-signed lab certificate is acceptable only because this package never leaves the lab.
-
-**Deploy via Intune.**
-
-1. **Trusted Certificate profile.** In the Intune admin center: **Devices** > **Configuration** > **Create** > **New policy** > platform **Windows 10 and later**, profile type **Templates** > **Trusted certificate** > **Create**. Name it `CFG-MSIX-Trust`. Upload `BDLabMSIX.cer`; set **Certificate destination store** to **Local Computer - Trusted People** (the documented requirement for MSIX signing certificates — [MSIX deployment](https://learn.microsoft.com/en-us/windows/msix/desktop/managing-your-msix-deployment-intune)). Assign to `GRP-INT-Pilot-Devices` and **Review + create**.
-2. **Add the app.** **Apps** > **All apps** > **Add** > app type **Line-of-business app** > **Select** ([MSIX deployment](https://learn.microsoft.com/en-us/windows/msix/desktop/managing-your-msix-deployment-intune)). Upload the signed `.msix`; the app information fills from the package.
-3. **Assignments**: **Required** with **App install context** set to **Device** (the documented recommendation for MSIX LOB apps — [MSIX deployment](https://learn.microsoft.com/en-us/windows/msix/desktop/managing-your-msix-deployment-intune)), assigned to `GRP-INT-Pilot-Devices`. **Review + create**.
-4. Verify on CLIENT01: Settings > Apps > Installed apps lists the app; the app's install status in Intune shows success.
-5. Troubleshooting: error `0x80073CF3` (ERROR_INSTALL_PACKAGE_DOWNGRADE) means a newer version of the app is already installed — uninstall the existing copy or match versions; also confirm the Trusted certificate profile applied before the app install ([MSIX deployment](https://learn.microsoft.com/en-us/windows/msix/desktop/managing-your-msix-deployment-intune)).
-
-**Evidence.** E-15 — MSIX app install status + trusted certificate profile.
-
-**Rollback.** Unassign the app and delete the Trusted certificate profile.
 
 ## Phase 4 — Access Enforcement
 
