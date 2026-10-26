@@ -57,6 +57,8 @@ intune-hybrid-endpoint-management/
 └── validation-and-troubleshooting.md
 ```
 
+---
+
 ## Business Case
 
 The starting point is a working AD deployment: two domain controllers, one Windows 11 client, GPO-based hardening, Windows LAPS, and System State backups. What it lacks is what every organization needs next:
@@ -67,6 +69,23 @@ The starting point is a working AD deployment: two domain controllers, one Windo
 - **App delivery.** Win32 packaging and click-to-run Office replace manual installs.
 
 The project delivers all four on a Microsoft 365 Business Premium license footprint — the same stack a small business actually buys.
+
+## 🏛️ Key Architectural & Engineering Decisions
+
+Rather than applying default settings, each component was designed around enterprise operational resilience and defense-in-depth:
+
+1. **Identity Boundary Protection (OU Filtering):**
+   * *Decision:* Excluded Tier-0/1 Admin OUs, service accounts, and built-in AD containers from Entra Connect sync[cite: 1].
+   * *Impact:* Reduces attack surface by keeping privileged on-prem accounts air-gapped from cloud identity compromise.
+2. **Resilient Authentication (PHS over PTA):**
+   * *Decision:* Deployed Password Hash Synchronization instead of Pass-Through Authentication or Federation[cite: 1].
+   * *Impact:* Ensures cloud service availability during on-premises WAN or infrastructure outages[cite: 1].
+3. **Escrow-Before-Encrypt BitLocker Policy:**
+   * *Decision:* Configured disk encryption to mandate successful recovery key escrow to Entra ID prior to volume encryption initiation[cite: 1].
+   * *Impact:* Guarantees enterprise recovery capability and prevents orphaned, unrecoverable endpoints.
+4. **Zero-Lockout Conditional Access Rollout:**
+   * *Decision:* Configured emergency cloud-only break-glass accounts with explicit CA exclusions and enforced a strict Report-Only validation phase before switching to block mode[cite: 1].
+   * *Impact:* Precludes administrative tenant lockouts while proving policy evaluation telemetry.
 
 ## Architecture Overview
 
