@@ -488,27 +488,6 @@ Run the following command to filter specifically for computer policies:
 
 ## Phase 5 — PowerShell Automation (the 20%)
 
-### Section 17: Win32 App Packaging with New-Win32Package.ps1 (PowerShell)
-
-**Purpose.** Wrap the Microsoft Win32 Content Prep Tool with validation, logging, and the MSI product-code extraction needed for the Intune app definition.
-
-**Steps.**
-
-1. Download `IntuneWinAppUtil.exe` from the official [Microsoft Win32 Content Prep Tool repository](https://github.com/microsoft/microsoft-win32-content-prep-tool) to your admin workstation.
-2. Stage the app:
-   ```powershell
-   New-Item -ItemType Directory -Path C:\Staging\7zip -Force
-   # Copy 7z2409-x64.msi into C:\Staging\7zip
-   ```
-3. Run:
-   ```powershell
-   .\New-Win32Package.ps1 -SetupFolder 'C:\Staging\7zip' -SetupFile '7z2409-x64.msi' `
-     -IntuneWinAppUtilPath 'C:\Tools\IntuneWinAppUtil.exe' -OutputFolder 'C:\Staging\output' -LogPath 'C:\Staging\logs'
-   ```
-   The script validates inputs, runs `IntuneWinAppUtil.exe` with the documented parameters (`-c` setup folder, `-s` setup file, `-o` output folder) ([Win32 content prep](https://learn.microsoft.com/en-us/mem/intune/apps/apps-win32-prepare)), extracts the MSI product code, and writes a packaging log.
-4. Use the outputs in section 15b: the `.intunewin` for upload, the product code for the MSI detection rule, and the log as evidence.
-
-**Evidence.** E-17 — console output + packaging log.
 
 ### Section 18: Compliance Reporting with Get-IntuneComplianceReport.ps1 (PowerShell)
 
