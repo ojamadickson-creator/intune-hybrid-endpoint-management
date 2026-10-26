@@ -33,6 +33,4 @@ Evidence from a real tenant contains secrets. Before committing any capture:
 | E-17 | `.intunewin` package generated with log output | Console output of `New-Win32Package.ps1` | 17 |
 | E-18 | Compliance report CSV exported with device rows | Console output + CSV in `scripts\output\` | 18 |
 
-## Interview-Ready Evidence Set
 
-For interviews, the minimum set that demonstrates the full story: E-02 (hybrid identity), E-07 (hybrid join + MDM), E-09 (custom compliance), E-12 (BitLocker + key escrow), E-15 (app deployment), E-16 (Conditional Access enforcement), E-18 (Graph automation). Keep the raw screenshots and one page of notes each explaining what the viewer is looking at.
