@@ -508,7 +508,7 @@ Run the following command to filter specifically for computer policies:
 
 ### Section 19: On-Demand Device Sync with Sync-IntuneDevices.ps1 (PowerShell — beyond-ratio utility)
 
-**Purpose.** Trigger CLIENT01's check-in via Graph instead of waiting for the scheduled cycle — the same remote action as **Devices** > **All devices** > select device > **Sync** ([device sync](https://learn.microsoft.com/en-us/intune/intune-service/remote-actions/device-sync)). A sync forces a check-in so pending policies and apps are received; how fast they then apply depends on the device — watch the device's check-in time and policy status. This utility is handy during validation (sections 8, 12, 13, 15) but is not counted in the 80/20 ratio.
+**Purpose.** Trigger CLIENT01's check-in via Graph instead of waiting for the scheduled cycle — the same remote action as **Devices** > **All devices** > select device > **Sync** ([device sync](https://learn.microsoft.com/en-us/intune/intune-service/remote-actions/device-sync)). A sync forces a check-in so pending policies and apps are received; how fast they then apply depends on the device — watch the device's check-in time and policy status. 
 
 **Steps.**
 
