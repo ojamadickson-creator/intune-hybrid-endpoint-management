@@ -55,7 +55,7 @@ Phase 3  Security          Compliance policy -> custom compliance -> MDM baselin
 Phase 4  Configuration     Device restrictions + Settings Catalog -> update rings
 Phase 5  Apps              M365 Apps suite + Win32 app (packaged with PowerShell) + platform script
 Phase 6  Enforcement      Conditional Access (report-only -> on): MFA + compliant device
-Phase 7  Operations       Graph reporting, on-demand sync, bulk assignment, troubleshooting
+Phase 7  Operations       Graph reporting,troubleshooting
 ```
 
 The exhaustive, click-by-click procedure is [docs/step-by-step-guide.md](docs/step-by-step-guide.md) — 20 Intune work packages plus foundation prerequisites.
