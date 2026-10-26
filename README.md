@@ -100,14 +100,16 @@ Rather than applying default settings, each component was designed around enterp
 Full component breakdown and the Zero Trust flow: [docs/architecture.md](docs/architecture.md).
 
 ## Deployment Workflow
-Phase 1  Foundation        Tenant/licensing/UPN prep -> Entra Connect (PHS, OU filter) -> hybrid join (SCP)
-Phase 2  Enrollment        Automatic MDM enrollment (MDM scope + GPO) -> dynamic groups -> pilot device enrolled
-Phase 3  Security          Compliance policy -> custom compliance -> MDM baseline -> Defender -> BitLocker
-Phase 4  Configuration     Device restrictions + Settings Catalog -> update rings
-Phase 5  Apps              M365 Apps suite + Win32 app (packaged with PowerShell) + platform script
-Phase 6  Enforcement       Conditional Access (report-only -> on): MFA + compliant device
-Phase 7  Operations        Graph reporting, troubleshooting
 
+```text
+Phase 1  Foundation     Tenant/licensing/UPN prep -> Entra Connect (PHS, OU filter) -> hybrid join (SCP)
+Phase 2  Enrollment     Automatic MDM enrollment (MDM scope + GPO) -> dynamic groups -> pilot device enrolled
+Phase 3  Security       Compliance policy -> custom compliance -> MDM baseline -> Defender -> BitLocker
+Phase 4  Configuration  Device restrictions + Settings Catalog -> update rings
+Phase 5  Apps           M365 Apps suite + Win32 app (packaged with PowerShell) + platform script
+Phase 6  Enforcement    Conditional Access (report-only -> on): MFA + compliant device
+Phase 7  Operations     Graph reporting, troubleshooting
+````
 
 The exhaustive, click-by-click procedure is [docs/step-by-step-guide.md](docs/step-by-step-guide.md) — 20 Intune work packages plus foundation prerequisites.
 
