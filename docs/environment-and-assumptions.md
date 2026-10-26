@@ -1,27 +1,3 @@
-# Environment and Assumptions
-
-This document records the lab environment the Intune deployment builds on, separates what already exists from what this project adds, and lists every assumption made during the design. 
-
-## Existing On-Premises Environment
-
-The on-premises estate is the Active Directory forest deployed in the companion project "Secure On-Premises Active Directory Domain Services Deployment". Its relevant facts:
-
-| Item | Value |
-|---|---|
-| Forest / domain | `ad.beginningdimension.com` |
-| NetBIOS domain | `BEGINNINGDIM` |
-| AD site | `HQ` (subnet `192.168.10.0/24`) |
-| DC01 | `192.168.10.10` — primary DC, DNS, Global Catalog, initial FSMO roles |
-| DC02 | `192.168.10.11` — replica DC, DNS, Global Catalog |
-| Gateway | `192.168.10.1` |
-| CLIENT01 | `192.168.10.20` — Windows 11 Enterprise, domain-joined, in `Beginningdimension\Computers\Workstations` |
-| OU design | `Beginningdimension` > `Users`, `Computers\Workstations`, `Computers\Laptops`, `Servers`, `Groups\SecurityGroups`, `ServiceAccounts`, `Admin\Tier0`, `Pilot` |
-| Standard user | `jdoe` (in `Users`) |
-| Privileged user | `adm_jdoe` (in `Admin\Tier0`) |
-| Security groups | `GG_IT_Helpdesk`, `GG_Tier0_Admins`, `GG_Tier1_Admins`, `GG_Tier2_Admins`, `GG_LAPS_Password_Readers`, `GG_HR_Users` |
-| Windows LAPS | Deployed to AD (schema extended, `Cfg-WindowsLAPS` GPO, passwords backed up to Active Directory) |
-| Key GPOs | `Sec-Domain-PasswordPolicy`, `Sec-DomainControllers-Baseline`, `Sec-DomainControllers-Auditing`, `Sec-Workstation-Baseline`, `Cfg-WindowsLAPS`, `Cfg-WindowsUpdate` |
-| Backups | Daily System State backups of both DCs |
 
 ## Existing Cloud Tenant
 
