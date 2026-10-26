@@ -41,7 +41,7 @@ The Intune implementation is divided into 20 work packages: 16 performed in the 
 P3 and P4 are configured through admin-center uploads (as part of sections 15c and 9) but their execution is PowerShell running on managed devices.
 
 
-## Foundation Prerequisites (Outside the Ratio)
+## Foundation Prerequisites 
 
 | Work | Guide section |
 |---|---|
