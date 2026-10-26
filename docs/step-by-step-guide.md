@@ -428,11 +428,11 @@ Run the following command to filter specifically for computer policies:
 
 **Prerequisite.** The `.intunewin` package must be generated first with the Microsoft Win32 Content Prep Tool (`IntuneWinAppUtil.exe`) — that is PowerShell work package 17; run it now to produce the package.
 
-1. Download the 7-Zip x64 MSI (e.g., `7z2409-x64.msi`) from [7-zip.org](https://www.7-zip.org/) into a staging folder.
+1. Download the 7-Zip x64 MSI (e.g., `7z2605-x64.msi`) from [7-zip.org](https://www.7-zip.org/) into a staging folder.
 2. Run `New-Win32Package.ps1` (section 17) to generate the `.intunewin` and capture the MSI product code GUID (needed for detection).
 3. In the Intune admin center: **Apps** > **All apps** > **Create** > app type **Windows app (Win32)** > **Select** ([add Win32 apps](https://learn.microsoft.com/en-us/mem/intune/apps/apps-win32-add)).
 4. **Basics**: name `APP-7zip-Win32`, publisher, install behavior note.
-5. **Program**: install command `msiexec /i "7z2409-x64.msi" /qn`; uninstall command `msiexec /x "{GUID}" /qn` (the GUID from step 2); install behavior **System**; allow the default 60-minute timeout ([Win32 Program settings](https://learn.microsoft.com/en-us/mem/intune/apps/apps-win32-add)).
+5. **Program**: install command `msiexec /i "7z2605-x64.msi" /qn`; uninstall command `msiexec /x "{GUID}" /qn` (the GUID from step 2); install behavior **System**; allow the default 60-minute timeout ([Win32 Program settings](https://learn.microsoft.com/en-us/mem/intune/apps/apps-win32-add)).
 6. **Requirements**: OS architecture **x64**; minimum OS **Windows 11**.
 7. **Detection rules**: **Manually configure detection rules** > rule type **MSI** > enter the product code GUID ([Win32 detection](https://learn.microsoft.com/en-us/mem/intune/apps/apps-win32-add)).
 8. **Dependencies**: none. **Review + create**.
@@ -498,11 +498,11 @@ Run the following command to filter specifically for computer policies:
 2. Stage the app:
    ```powershell
    New-Item -ItemType Directory -Path C:\Staging\7zip -Force
-   # Copy 7z2409-x64.msi into C:\Staging\7zip
+   # Copy 7z2605-x64.msi into C:\Staging\7zip
    ```
 3. Run:
    ```powershell
-   .\New-Win32Package.ps1 -SetupFolder 'C:\Staging\7zip' -SetupFile '7z2409-x64.msi' `
+   .\New-Win32Package.ps1 -SetupFolder 'C:\Staging\7zip' -SetupFile '7z2605-x64.msi' `
      -IntuneWinAppUtilPath 'C:\Tools\IntuneWinAppUtil.exe' -OutputFolder 'C:\Staging\output' -LogPath 'C:\Staging\logs'
    ```
    The script validates inputs, runs `IntuneWinAppUtil.exe` with the documented parameters (`-c` setup folder, `-s` setup file, `-o` output folder) ([Win32 content prep](https://learn.microsoft.com/en-us/mem/intune/apps/apps-win32-prepare)), extracts the MSI product code, and writes a packaging log.
