@@ -32,8 +32,6 @@ Evidence from a real tenant contains secrets. Before committing any capture:
 | E-16 | Conditional Access policies in report-only then On; sign-in log showing policy applied and device compliance gate | Intune admin center > Conditional Access node; Entra admin center > Monitoring > Sign-in logs | 16 |
 | E-17 | `.intunewin` package generated with log output | Console output of `New-Win32Package.ps1` | 17 |
 | E-18 | Compliance report CSV exported with device rows | Console output + CSV in `scripts\output\` | 18 |
-| E-19 | Device sync triggered via Graph; last check-in time updated | Console output; device pane last sync time | 19 |
-| E-20 | Bulk assignment added via Graph; assignments visible in policy UI | Console output; policy assignment list | 20 |
 
 ## Interview-Ready Evidence Set
 
