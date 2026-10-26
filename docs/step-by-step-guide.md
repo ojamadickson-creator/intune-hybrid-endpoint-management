@@ -506,35 +506,6 @@ Run the following command to filter specifically for computer policies:
 
 **Evidence.** E-18 — console run + CSV output.
 
-### Section 19: On-Demand Device Sync with Sync-IntuneDevices.ps1 (PowerShell — beyond-ratio utility)
-
-**Purpose.** Trigger CLIENT01's check-in via Graph instead of waiting for the scheduled cycle — the same remote action as **Devices** > **All devices** > select device > **Sync** ([device sync](https://learn.microsoft.com/en-us/intune/intune-service/remote-actions/device-sync)). A sync forces a check-in so pending policies and apps are received; how fast they then apply depends on the device — watch the device's check-in time and policy status. 
-
-**Steps.**
-
-1. Run:
-   ```powershell
-   .\Sync-IntuneDevices.ps1 -DeviceName 'CLIENT01' -TenantId 'your-tenant-id'
-   ```
-2. The script resolves the device, prints its last check-in time, and calls the Graph syncDevice action. Note the reported time reflects the check-in before the sync — re-run the script (or check the admin center) to see the new check-in timestamp, and confirm the pending policies then move to their applied states.
-
-**Evidence.** E-19 — console output + updated check-in time.
-
-### Section 20: Bulk Policy Assignment with Add-IntuneBulkAssignment.ps1 (PowerShell — beyond-ratio utility)
-
-**Purpose.** Add groups to a policy's assignments with one command — demonstrating assignment automation via Graph. This utility is used when promoting policies beyond the pilot and is not counted in the 80/20 ratio.
-
-**Steps.**
-
-1. Run:
-   ```powershell
-   .\Add-IntuneBulkAssignment.ps1 -PolicyType Compliance -PolicyName 'CMP-Win11-Health' `
-     -GroupNames 'GRP-INT-Win11-Corporate' -TenantId 'your-tenant-id'
-   ```
-2. The Graph **assign** action replaces a policy's full assignment list, so the script first reads the current assignments (following pagination), backs them up to `output/assignments-backup-*.json`, then merges the new group while preserving every existing target — including exclusions and assignment filters. Only Compliance and Configuration policies are supported; security baselines use a different assignment model and are assigned in the admin center.
-3. Verify: open **Devices** > **Compliance** > `CMP-Win11-Health` > **Properties** > **Assignments** — the new group is included and the previous targets are unchanged. Rollback: restore the backup file with the same assign action, or edit in the admin center.
-
-**Evidence.** E-20 — console output + assignment list in the portal.
 
 ## Execution Order Summary
 
@@ -547,7 +518,7 @@ Run the following command to filter specifically for computer policies:
 | 5 | 8, 9, 10 | Compliance and baseline |
 | 6 | 11, 12 | Defender onboarding, encryption |
 | 7 | 13, 14 | Configuration and updates |
-| 8 | 17 → 15 | Package (P1), then deploy apps, MSIX, and script |
+| 8 | 16 → 15 | Package (P1), then deploy apps, MSIX, and script |
 | 9 | 16 | Conditional Access (enforce last, pilot scope first) |
 | 10 | 18 | Reporting (P2) |
-| — | 19, 20 | Beyond-ratio utilities — run on demand (the ratio's four PowerShell packages are sections 17, 18, 15c, and 9) |
+
