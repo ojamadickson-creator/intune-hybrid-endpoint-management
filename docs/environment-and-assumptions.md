@@ -25,18 +25,6 @@ The Business Premium inclusions are the reason this project can run end-to-end o
 - **Intune-managed Windows LAPS.** Windows LAPS is already managed through on-premises AD (existing GPO). Deploying an Intune LAPS policy against the same devices would create two management authorities for one setting. The migration path is documented in `docs/settings-ownership.md` but not executed.
 - **Enrollment Status Page.** The ESP applies to Microsoft Entra join and Autopilot provisioning scenarios, not to existing domain-joined clients; it is not configured in this phase.
 
-## Assumptions and Decisions
-
-| # | Assumption / decision | Impact if wrong |
-|---|---|---|
-| A1 | The `beginningdimension.com` (or `ad.beginningdimension.com`) public DNS zone is controlled by you, so the domain can be verified in the tenant. | If the UPN suffix is not a verified domain, Entra ID replaces synced users' UPNs with the default `.onmicrosoft.com` value after synchronization ([Entra Connect user sign-in](https://learn.microsoft.com/en-us/entra/identity/hybrid/connect/plan-connect-user-signin)) — sign-in still works but with different UPNs than on-premises; verify the domain or add an alternate UPN suffix matching the tenant name before syncing. |
-| A2 | `CLIENT01` runs Windows 11 Pro with a supported build. As of October 2026 the compliance OS floor is 10.0.26200 (25H2) — 24H2 Home/Pro is end-of-updates per the [Windows 11 release information](https://learn.microsoft.com/en-us/windows/release-health/windows11-release-information) page. Verify the actual build with `ver` and re-check that page at execution time. Business Premium includes rights to upgrade Windows Pro devices ([Upgrade Windows devices](https://learn.microsoft.com/en-us/microsoft-365/business-premium/m365bp-upgrade-windows-pro?view=o365-worldwide)). | Update rings and BitLocker policies still apply to Pro; adjust the minimum OS compliance rule to the actual supported build. |
-| A3 | `CLIENT01` has TPM 1.2+ and boots in UEFI mode. | Silent BitLocker enablement fails without TPM/UEFI ([BitLocker prerequisites](https://learn.microsoft.com/en-us/mem/intune/protect/encrypt-devices)). Verify before deploying the encryption policy. |
-| A4 | The trial tenant has security defaults disabled or will be reconfigured when Conditional Access is enabled. | Security defaults force MFA for all users and can conflict with custom Conditional Access; resolve before phase 7. |
-| A5 | `jdoe` receives one of the 25 Business Premium licenses; the global admin account is licensed separately. | Unlicensed users cannot be targeted by Intune enrollment or receive app assignments. |
-| A6 | DNS (forwarders to 1.1.1.1 / 8.8.8.8 on the DCs) and outbound HTTPS from the LAN work; the tenant is reachable from `CLIENT01`. | Hybrid join and enrollment fail without outbound access to Entra/Intune endpoints. |
-| A7 | The `Pilot` OU exists (created in the AD project) and is used to stage GPO conflicts. | If it does not exist, create it before phase 5, or link policy changes directly to `Workstations` with care. |
-| A8 | The Intune MDM authority is already set to Intune (default for tenants where Intune licenses exist). | If a tenant was previously Config Manager-managed, set the MDM authority first ([MDM authority](https://learn.microsoft.com/en-us/intune/intune-service/fundamentals/mdm-authority-set)). |
 
 ## Administrative Accounts Used
 
