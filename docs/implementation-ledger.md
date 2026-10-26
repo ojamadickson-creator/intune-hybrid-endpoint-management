@@ -27,7 +27,6 @@ The Intune implementation is divided into 20 work packages: 16 performed in the 
 | G12 | Update ring `UPD-Win11-Ring1-Pilot` | 14 | E-14 |
 | G13 | Microsoft 365 Apps suite `APP-M365Apps-Business` | 15a | E-15 |
 | G14 | Win32 app `APP-7zip-Win32` | 15b | E-15 |
-| G15 | MSIX: trusted certificate profile `CFG-MSIX-Trust` + line-of-business app | 15d | E-15 |
 | G16 | Conditional Access: `CA-MFA-AllUsers` and `CA-RequireCompliantDevice` (Intune admin center Conditional Access node) | 16 | E-16 |
 
 ## PowerShell Packages (4)
