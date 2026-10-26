@@ -8,7 +8,7 @@
     report. Designed for portfolio evidence and interview walkthroughs.
 
     Microsoft Graph PowerShell SDK: https://learn.microsoft.com/powershell/microsoftgraph/get-started
-    Intune Graph overview:         https://learn.microsoft.com/graph/api/resources/intune-graph-overview
+    Intune Graph overview:          https://learn.microsoft.com/graph/api/resources/intune-graph-overview
 
 .PARAMETER TenantId
     The Entra tenant ID (find it in the Entra admin center > Overview).
@@ -81,15 +81,15 @@ try {
     $rows = foreach ($device in $devices) {
         # complianceState is a device-level rollup reported by the Intune service.
         [pscustomobject]@{
-            DeviceName            = $device.DeviceName
-            UserPrincipalName     = $device.UserPrincipalName
-            OperatingSystem       = $device.OperatingSystem
-            OsVersion             = $device.OsVersion
-            ComplianceState       = $device.ComplianceState
+            DeviceName             = $device.DeviceName
+            UserPrincipalName      = $device.UserPrincipalName
+            OperatingSystem        = $device.OperatingSystem
+            OsVersion              = $device.OsVersion
+            ComplianceState        = $device.ComplianceState
             ManagedDeviceOwnerType = $device.ManagedDeviceOwnerType
-            EnrolledDateTime      = if ($device.EnrolledDateTime) { $device.EnrolledDateTime.ToString('yyyy-MM-dd HH:mm') } else { $null }
-            LastSyncDateTime      = if ($device.LastSyncDateTime) { $device.LastSyncDateTime.ToString('yyyy-MM-dd HH:mm') } else { $null }
-            DeviceId              = $device.Id
+            EnrolledDateTime       = if ($device.EnrolledDateTime) { $device.EnrolledDateTime.ToString('yyyy-MM-dd HH:mm') } else { $null }
+            LastSyncDateTime       = if ($device.LastSyncDateTime) { $device.LastSyncDateTime.ToString('yyyy-MM-dd HH:mm') } else { $null }
+            DeviceId               = $device.Id
         }
     }
 
@@ -114,9 +114,12 @@ catch {
     throw
 }
 finally {
-    $ctx = Get-MgContext
-    if ($ctx) {
-        $null = Disconnect-MgGraph
-        Write-Log 'Disconnected from Microsoft Graph.'
+    # Safely verify the module/cmdlet is loaded before attempting to disconnect
+    if (Get-Command Get-MgContext -ErrorAction SilentlyContinue) {
+        $ctx = Get-MgContext
+        if ($ctx) {
+            $null = Disconnect-MgGraph
+            Write-Log 'Disconnected from Microsoft Graph.'
+        }
     }
 }
