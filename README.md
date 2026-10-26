@@ -1,6 +1,20 @@
-# Hybrid Identity and Intune Endpoint Management Deployment
+# Hybrid Identity and Intune Modern Endpoint Management
 
-Portfolio project: extending a hardened on-premises Active Directory environment (Windows Server 2025, `ad.beginningdimension.com`) into a Microsoft 365 tenant using Microsoft Entra Connect, Microsoft Entra hybrid join, and Microsoft Intune — then enforcing Zero Trust access with Conditional Access.
+[![Intune](https://img.shields.io/badge/Microsoft-Intune-blue?logo=microsoft)](https://intune.microsoft.com)
+[![Entra ID](https://img.shields.io/badge/Entra%20ID-P1%2FP2-0078D4?logo=azure-active-directory)](https://entra.microsoft.com)
+[![PowerShell](https://img.shields.io/badge/PowerShell-7.x%20%2F%20Graph%20SDK-5391FE?logo=powershell)](https://github.com/microsoftgraph/msgraph-sdk-powershell)
+[![Windows Server](https://img.shields.io/badge/Windows%20Server-2025-0078D6?logo=windows)](https://www.microsoft.com)
+
+> **Portfolio Project:** Production-grade implementation extending an on-premises Active Directory environment (`ad.beginningdimension.com`) into Microsoft Entra ID and Intune. Enforces Zero Trust compliance, automated cloud enrollment, modern app delivery, and Conditional Access gating on an M365 Business Premium footprint.
+
+---
+
+### 🎯 Quick Highlights & Role Fit
+* **Target Roles:** Modern Workplace Engineer | Cloud Systems Administrator | Identity & MDM Specialist
+* **Key Deliverables:** 20 verified work packages (80% Intune Admin Center / 20% Graph PowerShell & Custom Tooling).
+* **Architecture Style:** Hybrid Cloud Identity with Zero Trust Device-Health Enforcement.
+
+---
 
 ![Lab diagram](docs/assets/lab-diagram.svg)
 
