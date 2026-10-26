@@ -101,16 +101,13 @@ Full component breakdown and the Zero Trust flow: [docs/architecture.md](docs/ar
 
 ## Deployment Workflow
 
-```text
-
-Phase 1  Foundation & Enrollment        Tenant/Licensing prep -> Entra Connect (PHS, OU filter) -> Hybrid Join (SCP) -> MDM GPO -> Groups -> Pilot enrolled
-Phase 2  Security & Compliance Policies Compliance -> Custom compliance (JSON/script) -> Baseline -> Defender -> BitLocker -> Settings Catalog -> Update rings
-Phase 3  Applications & Scripts        M365 Apps (XML) -> Win32 app (7-Zip via IME) -> Platform script (Device inventory)
-Phase 4  Access Enforcement             Conditional Access (Report-only -> On): MFA enforcement + Compliant device gating
-Phase 5  PowerShell Automation          Win32 packaging utility (New-Win32Package.ps1) -> Graph SDK compliance report (Get-IntuneComplianceReport.ps1)
-
-
-````
+| Phase | Focus | Implementation Path |
+|:---|:---|:---|
+| **Phase 1** | **Foundation & Enrollment** | Tenant/Licensing prep → Entra Connect (PHS, OU filter) → Hybrid join (SCP) → Automatic MDM enrollment GPO → Target groups → Pilot device enrolled |
+| **Phase 2** | **Security & Compliance Policies** | Tenant compliance settings → Built-in compliance policy → Custom compliance (PowerShell + JSON) → MDM security baseline → Defender for Business onboarding & Endpoint Security → BitLocker silent encryption & key escrow → Configuration profiles (Restrictions & OneDrive KFM) → Windows Update rings |
+| **Phase 3** | **Applications & Scripts** | Microsoft 365 Apps suite (ODT XML) → Win32 packaging pipeline (7-Zip) → Platform PowerShell script (Inventory snapshot) |
+| **Phase 4** | **Access Enforcement** | Security defaults transition → Conditional Access policy creation (Report-only) → MFA requirement → Compliant device enforcement & validation |
+| **Phase 5** | **PowerShell Automation** | Win32 packaging automation (`New-Win32Package.ps1`) → Microsoft Graph compliance reporting (`Get-IntuneComplianceReport.ps1`) |
 
 The exhaustive, click-by-click procedure is [docs/step-by-step-guide.md](docs/step-by-step-guide.md) — 20 Intune work packages plus foundation prerequisites.
 
