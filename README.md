@@ -18,6 +18,17 @@
 
 ![Lab diagram](docs/assets/lab-diagram.svg)
 
+
+## 📌 Verified Deployment Proof
+
+| Hybrid Join & Registration | Security, Compliance & BitLocker | App Deployment & Scripts | Zero Trust Conditional Access | Operations & Graph Auditing |
+|:---:|:---:|:---:|:---:|:---:|
+| **Phase 1** | **Phase 2** | **Phase 3** | **Phase 4** | **Phase 5** |
+| `dsregcmd /status`<br>Entra Connect sync<br>Automatic MDM enrollment | Device health attestation<br>Silent BitLocker escrow<br>Custom compliance JSON | Win32 packaging pipeline<br>M365 Apps Click-to-Run<br>Platform inventory logs | Report-only evaluation<br>MFA enforcement<br>Compliant device gates | Graph SDK audit export<br>Automated device sync<br>Bulk group assignment |
+| [📁 View Phase 1 Artifacts](docs/assets/Screenshots/Phase%201/) | [📁 View Phase 2 Artifacts](docs/assets/Screenshots/Phase%202/) | [📁 View Phase 3 Artifacts](docs/assets/Screenshots/Phase%203/E-15/) | [📁 View Phase 4 Artifacts](docs/assets/Screenshots/Phase%204/) | [📁 View Phase 5 Artifacts](docs/assets/Screenshots/Phase%205/E-18/) |
+
+*(All timestamped run outputs, evidence captures, and redaction criteria are tracked against the manifest in [docs/evidence-checklist.md](docs/evidence-checklist.md).)*
+
 ## Repository Layout
 
 ```
