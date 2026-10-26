@@ -33,19 +33,28 @@
 
 ```
 intune-hybrid-endpoint-management/
-├── README.md                          this file
-├── validation-and-troubleshooting.md  proving it works + incident runbooks
 ├── docs/
-│   ├── architecture.md                component and Zero Trust flow breakdown
-│   ├── step-by-step-guide.md          the work packages, GUI + PowerShell
-│   ├── environment-and-assumptions.md existing AD/tenant facts + design decisions
-│   ├── implementation-ledger.md        the package by package
-│   ├── verification-manifest.md       every configured setting with its Microsoft Learn source
-│   ├── settings-ownership.md           who owns which setting (GPO vs Intune)
-│   ├── evidence-checklist.md           screenshot + redaction plan per work package
-│   └── assets/lab-diagram.svg         the diagram above
-├── scripts/                           PowerShell automation + JSON
-└── tests/                             parse + functional checks for the scripts
+│   ├── assets/
+│   │   ├── Screenshots/
+│   │   │   ├── Phase 1/
+│   │   │   ├── Phase 2/
+│   │   │   ├── Phase 3/E-15/
+│   │   │   ├── Phase 4/
+│   │   │   └── Phase 5/E-18/
+│   │   ├── lab-diagram.png
+│   │   └── lab-diagram.svg
+│   ├── architecture.md
+│   ├── environment-and-assumptions.md
+│   ├── evidence-checklist.md
+│   ├── implementation-ledger.md
+│   ├── settings-ownership.md
+│   ├── step-by-step-guide.md
+│   └── verification-manifest.md
+├── scripts/
+├── tests/
+├── .gitignore
+├── README.md
+└── validation-and-troubleshooting.md
 ```
 
 ## Business Case
