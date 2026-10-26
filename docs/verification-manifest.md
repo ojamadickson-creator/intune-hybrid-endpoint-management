@@ -43,7 +43,7 @@ Every setting, path, and prerequisite configured in this project, with the Micro
 | G13 M365 Apps | Apps > All apps > Microsoft 365 Apps | XML config required for business edition; full `<Configuration>` root; `<RemoveMSI />` | Business edition must use XML | [Add Microsoft 365 Apps](https://learn.microsoft.com/en-us/intune/intune-service/apps/apps-add-office365) | 2026-10 |
 | G14 Win32 app | Apps > All apps > Windows app (Win32) | Detection: MSI product code; install behavior System | `.intunewin` from P1 | [Add Win32 apps](https://learn.microsoft.com/en-us/mem/intune/apps/apps-win32-add) | 2026-10 |
 | G14 Win32 prep | IntuneWinAppUtil -c -s -o | Quoted paths for spaces | | [Prepare Win32 content](https://learn.microsoft.com/en-us/mem/intune/apps/apps-win32-prepare) | 2026-10 |
-| | | |
+| | | | | |
 | G16 Conditional Access | Intune admin center Conditional Access node | CA-MFA-AllUsers, CA-RequireCompliantDevice | Same node as Entra; device-based CA for M365 configured through Intune admin center; P1 required | [Conditional Access with Intune](https://learn.microsoft.com/en-us/mem/intune/protect/conditional-access-intune-common-ways-use) | 2026-10 |
 | G16 Report-only rollout | Enable policy: Report-only first | Pilot scope, break-glass excluded; MFA policy promoted to All users at security-defaults cutover | Pattern from Microsoft's template | [Approved apps or app protection template](https://learn.microsoft.com/en-us/entra/identity/conditional-access/policy-all-users-approved-app-or-app-protection) | 2026-10 |
 
